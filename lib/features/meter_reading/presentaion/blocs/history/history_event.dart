@@ -1,0 +1,17 @@
+import 'package:equatable/equatable.dart';
+
+abstract class HistoryEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class LoadHistoryEvent extends HistoryEvent {}
+
+class DeleteReadingEvent extends HistoryEvent {
+  final int key;
+
+  DeleteReadingEvent(this.key);
+
+  @override
+  List<Object?> get props => [key];
+}
