@@ -6,9 +6,12 @@ class ExtractDigitsUseCase {
 
     final digits = matches
         .map((e) => e.group(0)!)
-        .where((e) => e.length >= 4)
+        .where((e) => e.length >= 2)
         .toList();
 
     return digits;
   }
 }
+
+
+

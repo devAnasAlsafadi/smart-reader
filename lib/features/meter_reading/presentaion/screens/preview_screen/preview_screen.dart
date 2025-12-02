@@ -1,21 +1,16 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:path_provider/path_provider.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_reader/core/app_dimens.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
-
 import '../../../../../core/routes/navigation_manager.dart';
 import '../../../../../core/routes/route_name.dart';
-import '../../../../../core/utils/image_converter.dart';
 import '../../blocs/meter_reading/meter_reading_bloc.dart';
 
 class PreviewScreen extends StatefulWidget {
   final File imageFile;
-  PreviewScreen({super.key, required this.imageFile});
+  const PreviewScreen({super.key, required this.imageFile});
 
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
@@ -35,6 +30,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
           setState(() {});
         }
         if (state is OcrTextReadyState) {
+          _isProcessing = false;
           _rawText = state.rawText;
           setState(() {});
           context.read<MeterReadingBloc>().add(ExtractDigitsEvent(_rawText));
@@ -44,6 +40,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
           _digits = state.digits;
           setState(() {});
 
+          print('_rawText is :$_rawText');
           NavigationManger.navigateTo(
             context,
             RouteNames.extractReadingScreen,

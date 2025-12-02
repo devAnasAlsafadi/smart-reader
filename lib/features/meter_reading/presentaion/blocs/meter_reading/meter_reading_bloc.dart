@@ -24,6 +24,8 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
     required this.extractDigitsUseCase,
     required this.saveReadingUseCase,
   }) : super(MeterReadingInitial()) {
+
+
     on<PickFromCameraEvent>((event, emit) async {
       emit(ImagePickingState());
       final File? image = await imagePickerService.pickFromCamera();
@@ -48,6 +50,7 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
     on<ProcessImageEvent>((event, emit)async {
       emit(OcrProcessingState());
       final String extractedText = await processImageUseCase(event.imageFile);
+      print('extractedText is : $extractedText');
       emit(OcrTextReadyState(extractedText));
     },);
 

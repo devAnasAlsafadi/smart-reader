@@ -117,7 +117,7 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
                   ? null
                   : () {
                       NavigationManger.navigateTo(context, RouteNames.result,arguments: {
-                        'reading':selectedReading,
+                        'reading':widget.rawText,
                         'imagePath':widget.imagePath
                       });
                     },

@@ -4,8 +4,10 @@ import 'dart:ui' as ui;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smart_reader/core/utils/image_converter.dart';
 
 import '../../../../../core/app_dimens.dart';
+import '../../../../../core/native/native_image_processor.dart';
 import '../../../../../core/routes/navigation_manager.dart';
 import '../../../../../core/routes/route_name.dart';
 import 'camera_image_processor.dart';
@@ -29,7 +31,9 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
-    _initCamera();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initCamera();
+    });
   }
 
   Future<void> _initCamera() async {
@@ -63,27 +67,37 @@ class _CameraScreenState extends State<CameraScreen> {
         screenSize: screenSize,
       );
 
-      final dir = await getApplicationDocumentsDirectory();
-      final savedPath =
-          "${dir.path}/meter_${DateTime
-          .now()
-          .millisecondsSinceEpoch}.png";
+      final enhancedBytes = await NativeImageProcessor.enhance(croppedBytes);
 
-      final savedFile = File(savedPath);
-      await savedFile.writeAsBytes(croppedBytes);
+      final dir = await getApplicationDocumentsDirectory();
+
+      final croppedFile = File("${dir.path}/meter_raw_${DateTime
+          .now()}.png");
+      await croppedFile.writeAsBytes(croppedBytes);
+
+      final enhancedFile = File("${dir.path}/meter_enhanced_${DateTime
+          .now()}.png");
+      await enhancedFile.writeAsBytes(enhancedBytes);
+
       NavigationManger.navigateTo(
         context,
         RouteNames.preview,
-        arguments: savedFile,
+        arguments: enhancedFile,
       );
     } catch (e) {
       debugPrint("Capture error: $e");
     }
   }
 
+
+
+
   @override
   void dispose() {
-    _controller?.dispose();
+    if (_controller != null) {
+      _controller!.dispose();
+      _controller = null;
+    }
     super.dispose();
   }
 
@@ -125,8 +139,11 @@ class _CameraScreenState extends State<CameraScreen> {
                   ),
 
                   Positioned.fill(
-                    child: CustomPaint(
-                      painter: CameraOverlayPainter(overlayRect),
+                    child: IgnorePointer(
+                      ignoring: true,
+                      child: CustomPaint(
+                        painter: CameraOverlayPainter(overlayRect),
+                      ),
                     ),
                   ),
 
@@ -144,8 +161,15 @@ class _CameraScreenState extends State<CameraScreen> {
                     left: 0,
                     right: 0,
                     child: GestureDetector(
-                      onTap: () =>
-                          _capture(overlayRect, Size(screenW, screenH)),
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        try {
+                          print('clicked success');
+                          await _capture(overlayRect, Size(screenW, screenH));
+                        } catch (e) {
+                          debugPrint("CAPTURE ERROR: $e");
+                        }
+                      },
                       child: Container(
                         width: 70,
                         height: 70,

@@ -15,24 +15,16 @@ class MeterReadingRepository {
    await box.add(reading);
  }
 
- // Future<List<MeterReadingEntity>> getAllReadings()async{
- //   final box = await _openBox();
- //   return box.values.toList();
- // }
  Future<List<MapEntry<dynamic, MeterReadingEntity>>> getAllReadings() async {
    final box = await _openBox();
    return box.toMap().entries.toList();
  }
- //
- // Future<void> deleteReading(int index) async {
- //   final box = await _openBox();
- //   await box.deleteAt(index);
- // }
 
  Future<void> deleteReading(int key) async {
    final box = await _openBox();
    await box.delete(key);
  }
+
 
 
 }

@@ -42,6 +42,10 @@ android {
     }
 }
 
+dependencies {
+    implementation(project(":opencv"))
+}
+
 flutter {
     source = "../.."
 }

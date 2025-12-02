@@ -9,6 +9,8 @@ import 'package:smart_reader/features/meter_reading/domain/entities/meter_readin
 import 'SimpleBlocObserver.dart';
 import 'firebase_options.dart';
 
+
+
 void main()async {
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,8 @@ void main()async {
   Hive.registerAdapter(MeterReadingEntityAdapter());
   runApp(const SmartReaderApp());
 
-
 }
+
+
+
 
