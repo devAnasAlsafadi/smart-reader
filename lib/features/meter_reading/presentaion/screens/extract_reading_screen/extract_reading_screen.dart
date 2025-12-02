@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_reader/core/routes/navigation_manager.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/widgets/reading_option_list.dart';
 import '../../../../../core/app_dimens.dart';
@@ -7,7 +6,6 @@ import '../../../../../core/app_dimens.dart';
 import '../../../../../core/routes/route_name.dart';
 import '../../../../../core/theme/app_color.dart';
 import '../../../../../core/theme/app_text_style.dart';
-import '../../blocs/meter_reading/meter_reading_bloc.dart';
 
 class ExtractReadingScreen extends StatefulWidget {
   const ExtractReadingScreen({
