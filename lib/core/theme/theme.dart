@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../app_dimens.dart';
+import '../utils/app_dimens.dart';
 import 'app_color.dart';
 import 'app_text_style.dart';
 

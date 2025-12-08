@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/app_dimens.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import '../../../../core/theme/app_color.dart';
 import '../../../../core/theme/app_text_style.dart';
 
@@ -24,7 +24,7 @@ class ReadingOptionTile extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColors.primaryLight.withOpacity(.15)
+              ? AppColors.primaryLight.withValues(alpha: .15)
               : Colors.white,
           borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
           border: Border.all(

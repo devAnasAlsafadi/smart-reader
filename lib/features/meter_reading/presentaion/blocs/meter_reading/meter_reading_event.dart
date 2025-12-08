@@ -1,40 +1,64 @@
-part of 'meter_reading_bloc.dart';
+import 'dart:io';
+import 'package:equatable/equatable.dart';
+import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 
-abstract class MeterReadingEvent  extends Equatable{
+abstract class MeterReadingEvent extends Equatable {
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
-class PickFromCameraEvent extends MeterReadingEvent{}
-class PickFromGalleryEvent extends MeterReadingEvent{}
+
 class ProcessImageEvent extends MeterReadingEvent {
   final File imageFile;
+
   ProcessImageEvent(this.imageFile);
+
   @override
   List<Object?> get props => [imageFile];
 }
-class ExtractDigitsEvent extends MeterReadingEvent {
-  final String extractedText;
 
-  ExtractDigitsEvent(this.extractedText);
+class ExtractDigitsEvent extends MeterReadingEvent {
+  final String rawText;
+
+  ExtractDigitsEvent(this.rawText);
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [extractedText];
+  List<Object?> get props => [rawText];
 }
 
+class SaveReadingEvent extends MeterReadingEvent {
+  final MeterReadingEntity entity;
 
-class SaveSelectedReadingEvent extends MeterReadingEvent {
- final String selectedReading;
- final String imagePath;
-
-  SaveSelectedReadingEvent({
-    required this.selectedReading,
-    required this.imagePath,
+  SaveReadingEvent({
+    required this.entity
   });
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [selectedReading,imagePath];
+  List<Object?> get props => [entity];
+}
+
+class LoadReadingsEvent extends MeterReadingEvent {
+  final String customerId;
+
+  LoadReadingsEvent(this.customerId);
+
+  @override
+  List<Object?> get props => [customerId];
+}
+
+class DeleteReadingEvent extends MeterReadingEvent {
+  final String id;
+
+  DeleteReadingEvent(this.id);
+
+  @override
+  List<Object?> get props => [id];
+}
+
+class SyncOfflineReadingsEvent extends MeterReadingEvent {
+  final String customerId;
+  SyncOfflineReadingsEvent(this.customerId);
+
+  @override
+  List<Object?> get props => [customerId];
 }

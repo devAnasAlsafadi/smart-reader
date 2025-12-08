@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../../core/app_dimens.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import '../../../../../core/theme/app_color.dart';
 import '../../../../../core/theme/app_text_style.dart';
 
@@ -11,6 +11,9 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).unfocus();
+    });
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -98,7 +101,7 @@ class SettingsScreen extends StatelessWidget {
               width: double.infinity,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.red.withOpacity(0.06),
+                color: Colors.red.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
               ),
               child: Center(

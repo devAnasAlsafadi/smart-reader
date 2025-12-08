@@ -1,29 +1,15 @@
-part of 'meter_reading_bloc.dart';
+import 'package:equatable/equatable.dart';
+import '../../../domain/entities/meter_reading_entity.dart';
 
-abstract class MeterReadingState extends Equatable{
+abstract class MeterReadingState extends Equatable {
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
-
- class MeterReadingInitial extends MeterReadingState {}
-
-class ImagePickingState extends MeterReadingState {}
-class ImagePickedSuccess extends MeterReadingState {
-  final File image;
-
-  ImagePickedSuccess(this.image);
-
-  @override
-  List<Object?> get props => [image];
-}
-
+class OcrInitialState extends MeterReadingState {}
 class OcrProcessingState extends MeterReadingState {}
-
 class OcrTextReadyState extends MeterReadingState {
   final String rawText;
-
   OcrTextReadyState(this.rawText);
 
   @override
@@ -32,28 +18,25 @@ class OcrTextReadyState extends MeterReadingState {
 
 class DigitsExtractedState extends MeterReadingState {
   final List<String> digits;
-
   DigitsExtractedState(this.digits);
 
   @override
   List<Object?> get props => [digits];
 }
-
-class MeterReadingError extends MeterReadingState {
-  final String message;
-
-  MeterReadingError(this.message);
+class ReadingsLoadingState extends MeterReadingState {}
+class ReadingsLoadedState extends MeterReadingState {
+  final List<MeterReadingEntity> readings;
+  ReadingsLoadedState(this.readings);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [readings];
 }
-
 
 class ReadingSavedLoadingState extends MeterReadingState {}
 class ReadingSavedSuccessState extends MeterReadingState {}
+
 class ReadingSavedFailureState extends MeterReadingState {
   final String message;
-
   ReadingSavedFailureState(this.message);
 
   @override
@@ -61,4 +44,4 @@ class ReadingSavedFailureState extends MeterReadingState {
 }
 
 
-
+class ReadingDeletedState extends MeterReadingState {}

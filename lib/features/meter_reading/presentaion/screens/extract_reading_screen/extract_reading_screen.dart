@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/widgets/reading_option_list.dart';
-import '../../../../../core/app_dimens.dart';
+import '../../../../../core/utils/app_dimens.dart';
 
 import '../../../../../core/routes/route_name.dart';
 import '../../../../../core/theme/app_color.dart';
@@ -12,11 +13,11 @@ class ExtractReadingScreen extends StatefulWidget {
     super.key,
     required this.readings,
     required this.rawText,
-    required this.imagePath,
+    required this.entity,
   });
   final List<String> readings;
+  final MeterReadingEntity entity;
   final String rawText;
-  final String imagePath;
 
   @override
   State<ExtractReadingScreen> createState() => _ExtractReadingScreenState();
@@ -114,10 +115,11 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
               onPressed: selectedReading == null
                   ? null
                   : () {
-                      NavigationManger.navigateTo(context, RouteNames.result,arguments: {
-                        'reading':widget.rawText,
-                        'imagePath':widget.imagePath
-                      });
+                final updated = widget.entity.copyWithNewData(
+                  reading: selectedReading,
+                );
+                      NavigationManger.navigateTo(context, RouteNames.result,arguments:
+                      updated);
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accentGreen,

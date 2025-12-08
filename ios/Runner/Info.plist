@@ -51,5 +51,11 @@
     <string>This app needs access to your photo library to select meter images.</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>This app may use the microphone when capturing videos.</string>
+
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app requires location to add customer coordinates.</string>
+
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>This app requires location to add customer coordinates.</string>
 </dict>
 </plist>

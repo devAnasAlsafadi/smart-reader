@@ -3,15 +3,17 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../../../core/app_dimens.dart';
 import '../../../../../core/native/native_image_processor.dart';
 import '../../../../../core/routes/navigation_manager.dart';
 import '../../../../../core/routes/route_name.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import 'camera_image_processor.dart';
 import 'camera_overlay_painter.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({super.key});
+
+  final String customerId;
+  const CameraScreen({super.key, required this.customerId});
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -32,6 +34,7 @@ class _CameraScreenState extends State<CameraScreen> {
       _initCamera();
     });
   }
+
 
   Future<void> _initCamera() async {
     final cameras = await availableCameras();
@@ -79,7 +82,10 @@ class _CameraScreenState extends State<CameraScreen> {
       NavigationManger.navigateTo(
         context,
         RouteNames.preview,
-        arguments: enhancedFile,
+        arguments: {
+          'imageFile' : enhancedFile,
+          'customerId' : widget.customerId
+        },
       );
     } catch (e) {
       debugPrint("Capture error: $e");

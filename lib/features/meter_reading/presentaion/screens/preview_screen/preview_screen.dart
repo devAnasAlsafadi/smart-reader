@@ -1,16 +1,22 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smart_reader/core/app_dimens.dart';
+import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
+import 'package:uuid/uuid.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
 import '../../../../../core/routes/navigation_manager.dart';
 import '../../../../../core/routes/route_name.dart';
 import '../../blocs/meter_reading/meter_reading_bloc.dart';
+import '../../blocs/meter_reading/meter_reading_event.dart';
+import '../../blocs/meter_reading/meter_reading_state.dart';
 
 class PreviewScreen extends StatefulWidget {
   final File imageFile;
-  const PreviewScreen({super.key, required this.imageFile});
+  final String customerId;
+
+  const PreviewScreen({super.key, required this.imageFile, required this.customerId});
 
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
@@ -47,7 +53,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
             arguments: {
               'readings': _digits,
               'rawText': _rawText,
-              'imagePath': widget.imageFile.path,
+              'entity':entity,
             },
           );
         }
@@ -136,4 +142,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
       ),
     );
   }
+
+   MeterReadingEntity get  entity {
+     final uuid = Uuid();
+     return  MeterReadingEntity(
+       id: uuid.v4(),
+       customerId: widget.customerId,
+       reading: "",
+       imagePath: widget.imageFile.path,
+       timestamp: DateTime.now(),
+       synced: false,
+     );
+   }
 }

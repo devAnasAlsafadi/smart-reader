@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:smart_reader/app.dart';
-import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
+import 'package:smart_reader/features/meter_reading/data/models/meter_reading_model.dart';
 
 import 'SimpleBlocObserver.dart';
+import 'features/auth/data/models/user_model.dart';
+import 'features/customers/data/models/customer_model.dart';
 import 'firebase_options.dart';
 
 
@@ -19,8 +21,15 @@ void main()async {
   );
   Bloc.observer = SimpleBlocObserver();
   await Hive.initFlutter();
-  Hive.registerAdapter(MeterReadingEntityAdapter());
+  Hive.registerAdapter(UserModelAdapter());
+  Hive.registerAdapter(CustomerModelAdapter());
+  Hive.registerAdapter(MeterReadingModelAdapter());
+  await Hive.openBox<UserModel>("user_box");
+  await Hive.openBox<CustomerModel>("customer_box");
+  await Hive.openBox<MeterReadingModel>("meter_reading_box");
+
   runApp(const SmartReaderApp());
+
 
 }
 

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
 
-import '../../features/meter_reading/presentaion/blocs/history/history_bloc.dart';
-import '../../features/meter_reading/presentaion/blocs/history/history_event.dart';
-import 'app_snackbar.dart';
 
 class AppDialog {
   static Future<void> showInfo(
@@ -95,7 +91,7 @@ class AppDialog {
                 child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: AppColors.accentRed.withOpacity(.12),
+                    color: AppColors.accentRed.withValues(alpha: .12),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(

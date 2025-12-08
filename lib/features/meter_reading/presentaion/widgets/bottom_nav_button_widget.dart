@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:smart_reader/core/app_dimens.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
-
-import '../../../../../core/app_assets.dart';
-import 'package:flutter/material.dart';
 
 class BottomNavButtonWidget extends StatelessWidget {
   const BottomNavButtonWidget({super.key,

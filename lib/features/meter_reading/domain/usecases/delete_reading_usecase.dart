@@ -1,13 +1,11 @@
-
-import '../../data/repositories/meter_reading_repository..dart';
+import '../repositories/meter_reading_repository.dart';
 
 class DeleteReadingUseCase {
-  final MeterReadingRepository repository;
+  final MeterReadingRepository repo;
 
-  DeleteReadingUseCase(this.repository);
+  DeleteReadingUseCase(this.repo);
 
-
-  Future<void> call(dynamic key) async {
-    await repository.deleteReading(key);
+  Future<void> call(String id) async {
+    return await repo.deleteReading(id);
   }
 }

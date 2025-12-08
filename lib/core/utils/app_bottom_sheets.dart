@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:smart_reader/core/app_dimens.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
+
+import 'app_dimens.dart';
 
 class AppBottomSheets {
   static void showScanOptions({
     required BuildContext context,
-    required VoidCallback onCamera,
-    required VoidCallback onGallery,
+    required VoidCallback onStreet,
+    required VoidCallback onName,
   }) {
     showModalBottomSheet(
       context: context,
@@ -23,26 +24,26 @@ class AppBottomSheets {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Select Source", style: AppTextStyles.heading2),
+              Text("Select to Filter", style: AppTextStyles.heading2),
               const SizedBox(height: AppDimens.verticalSpaceLarge),
 
               _optionButton(
-                icon: Icons.camera_alt,
-                text: "Use Camera",
+                icon: Icons.search_off,
+                text: "Search by Name",
                 onTap: () {
                   Navigator.pop(context);
-                  onCamera();
+                  onName();
                 },
               ),
 
               const SizedBox(height: AppDimens.verticalSpace),
 
               _optionButton(
-                icon: Icons.photo_library_outlined,
-                text: "Choose from Gallery",
+                icon: Icons.streetview,
+                text: "Search by Street",
                 onTap: () {
                   Navigator.pop(context);
-                  onGallery();
+                  onStreet();
                 },
               ),
             ],

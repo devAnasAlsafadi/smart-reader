@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
 
-import '../../../../../core/app_dimens.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import '../../../../../core/routes/navigation_manager.dart';
 import '../../../../../core/routes/route_name.dart';
 import '../../../../../core/theme/app_color.dart';
 import '../../../../../core/theme/app_text_style.dart';
 import '../../../../../core/utils/app_snackbar.dart';
+import '../../../domain/entities/meter_reading_entity.dart';
+import '../../blocs/meter_reading/meter_reading_event.dart';
+import '../../blocs/meter_reading/meter_reading_state.dart';
 import '../../widgets/action_button.dart';
 
 class ResultScreen extends StatefulWidget {
-  ResultScreen({
+   const ResultScreen({
     super.key,
-    required this.reading,
-    required this.imagePath,
+    required this.entity
   });
 
-  String reading;
-  final String imagePath;
+ final MeterReadingEntity entity;
 
   @override
   State<ResultScreen> createState() => _ResultScreenState();
@@ -36,12 +37,10 @@ class _ResultScreenState extends State<ResultScreen> {
             builder: (_) => const Center(child: CircularProgressIndicator()),
           );
         }
-
         if (state is ReadingSavedSuccessState) {
           AppSnackBar.success(context, "Reading saved successfully!");
           NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.home);
         }
-
         if (state is ReadingSavedFailureState) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
@@ -49,6 +48,8 @@ class _ResultScreenState extends State<ResultScreen> {
           );
         }
       },
+
+
 
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -91,9 +92,8 @@ class _ResultScreenState extends State<ResultScreen> {
                 child: ElevatedButton(
                   onPressed: () {
                     context.read<MeterReadingBloc>().add(
-                      SaveSelectedReadingEvent(
-                        selectedReading: widget.reading,
-                        imagePath: widget.imagePath,
+                      SaveReadingEvent(
+                          entity: widget.entity
                       ),
                     );
 
@@ -115,11 +115,11 @@ class _ResultScreenState extends State<ResultScreen> {
                         final updated = await NavigationManger.navigateTo(
                             context,
                             RouteNames.editReadingScreen,
-                            arguments: widget.reading
+                            arguments: widget.entity.reading
                         );
                         if (updated != null && updated is String) {
                           setState(() {
-                            widget.reading = updated;
+                            widget.entity.reading = updated;
                           });
                         }
                       },
@@ -132,7 +132,6 @@ class _ResultScreenState extends State<ResultScreen> {
                       label: "Try Again",
                       onTap: () {
                         NavigationManger.navigateAndReplace(context, RouteNames.camera);
-                        // NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.camera,);
                       },
                     ),
                   ),
@@ -166,7 +165,7 @@ class _ResultScreenState extends State<ResultScreen> {
         children: [
           const Text("Meter Reading", style: AppTextStyles.subtitle),
           const SizedBox(height: 10),
-          Text(widget.reading,
+          Text(widget.entity.reading,
               style: AppTextStyles.heading1.copyWith(fontSize: 30)),
           const SizedBox(height: 5),
           const Text("kWh", style: AppTextStyles.caption),

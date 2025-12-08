@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:smart_reader/core/app_dimens.dart';
+import '../../../../../core/utils/app_dimens.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 
 class LoadingDots extends StatefulWidget {
