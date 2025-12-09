@@ -20,6 +20,19 @@ import 'package:smart_reader/features/meter_reading/domain/usecases/extract_digi
 import 'package:smart_reader/features/meter_reading/domain/usecases/get_readings_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/process_image_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/sync_offline_readings_usecase.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/history_bloc/history_bloc.dart';
+import 'package:smart_reader/features/payments/data/data_source/payment_local_data_source.dart';
+import 'package:smart_reader/features/payments/data/data_source/payment_remote_data_source.dart';
+import 'package:smart_reader/features/payments/data/model/payment_model.dart';
+import 'package:smart_reader/features/payments/data/repositories/payment_repositories_impl.dart';
+import 'package:smart_reader/features/payments/data/services/billing_calculator.dart';
+import 'package:smart_reader/features/payments/domain/usecases/add_payment_usecase.dart';
+import 'package:smart_reader/features/payments/domain/usecases/calculate_billing_useCase.dart';
+import 'package:smart_reader/features/payments/domain/usecases/delete_payment_usecase.dart';
+import 'package:smart_reader/features/payments/domain/usecases/get_payments_usecase.dart';
+import 'package:smart_reader/features/payments/domain/usecases/sync_offline_payments_usecase.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
 
 import 'core/routes/app_router.dart';
 import 'core/routes/route_name.dart';
@@ -57,6 +70,10 @@ class SmartReaderApp extends StatelessWidget {
       AuthLocalDataSourceImpl(Hive.box<UserModel>("user_box")),
       AuthRemoteDataSourceImpl(),
     );
+    final paymentRepository = PaymentRepositoryImpl(
+      PaymentLocalDataSourceImpl(Hive.box<PaymentModel>("payment_box")),
+      PaymentRemoteDataSourceImpl(),
+    );
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -82,6 +99,30 @@ class SmartReaderApp extends StatelessWidget {
             getCustomers: GetCustomersUseCase(customerRepo),
             deleteCustomer: DeleteCustomerUseCase(customerRepo),
             syncCustomers: SyncOfflineCustomersUseCase(customerRepo),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => PaymentBloc(
+            addPaymentUseCase: AddPaymentUseCase(paymentRepository),
+            deletePaymentUseCase: DeletePaymentUseCase(paymentRepository),
+            getPaymentsUseCase: GetPaymentsUseCase(paymentRepository),
+            syncOfflinePaymentsUseCase: SyncOfflinePaymentsUseCase(
+              paymentRepository,
+            ),
+          ),
+        ),
+        BlocProvider(
+          create:(_) => BillingBloc(
+            getReadings: GetReadingsUseCase(meterReadingRepo),
+            getPayments: GetPaymentsUseCase(paymentRepository),
+            calculateBilling: CalculateBillingUseCase(BillingCalculator()),
+          ),
+        ),
+        BlocProvider(
+          create: (_) => HistoryBloc(
+            getReadings: GetReadingsUseCase(meterReadingRepo),
+            deleteReading: DeleteReadingUseCase(meterReadingRepo),
+            getCustomers: GetCustomersUseCase(customerRepo)
           ),
         ),
       ],

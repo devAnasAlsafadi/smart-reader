@@ -38,12 +38,7 @@ class MeterReadingLocalDataSourceImpl implements MeterReadingLocalDataSource{
   @override
   Future<MeterReadingModel?> getById(String meterReadingId) async{
     try {
-      for (final meterReading in box.values) {
-        if (meterReading.id == meterReadingId) {
-          return meterReading;
-        }
-      }
-      return null;
+      return box.get(meterReadingId);
     } catch (_) {
       return null;
     }

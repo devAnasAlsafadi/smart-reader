@@ -55,6 +55,8 @@ dependencies:
   uuid: ^4.4.2
   geolocator: ^14.0.2
   flutter_staggered_animations: ^1.1.1
+  cloudinary_public: ^0.23.1
+  fluttertoast: ^9.0.0
 
 dev_dependencies:
   flutter_test:

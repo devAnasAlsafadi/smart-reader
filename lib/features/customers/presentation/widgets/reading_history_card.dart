@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_reader/core/utils/reading_utils.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_event.dart';
 
 import '../../../../core/theme/app_text_style.dart';
+import '../../../../core/utils/app_date_utils.dart';
 import '../../../../core/utils/app_dimens.dart';
 import '../../../../core/utils/app_dialog.dart';
 import '../../../meter_reading/domain/entities/meter_reading_entity.dart';
@@ -38,7 +42,7 @@ class ReadingHistoryCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${reading.reading} kWh",
+                ReadingUtils.formatKwh(reading.reading),
                 style: AppTextStyles.heading3,
               ),
 
@@ -57,7 +61,7 @@ class ReadingHistoryCard extends StatelessWidget {
 
           // Timestamp
           Text(
-            reading.timestamp.toString(),
+            AppDateUtils.formatDateTime(reading.timestamp),
             style: AppTextStyles.caption,
           ),
         ],
@@ -76,6 +80,8 @@ class ReadingHistoryCard extends StatelessWidget {
 
     if (confirmed == true) {
       context.read<MeterReadingBloc>().add(DeleteReadingEvent(reading.id));
+      context.read<BillingBloc>().add(LoadBillingEvent(customerId));
+
     }
   }
 }

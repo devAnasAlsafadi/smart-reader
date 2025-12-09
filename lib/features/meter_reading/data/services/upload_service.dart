@@ -1,30 +1,25 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:cloudinary_public/cloudinary_public.dart';
 
 class UploadService {
-  static const String apiUrl = "https://api.upload.io/v2/accounts/{accountId}/uploads/binary";
-  static const String apiKey = "YOUR_API_KEY_HERE";
+  final cloudinary = CloudinaryPublic(
+    'dhrygxk3j',
+    'Meter Readings',    // ← Upload Preset (Unsigned)
+    cache: false,
+  );
 
-  Future<String> upload(String filePath) async {
-    final file = File(filePath);
+  Future<String> uploadImage(String filePath) async {
+    try {
+      final response = await cloudinary.uploadFile(
+        CloudinaryFile.fromFile(
+          filePath,
+          resourceType: CloudinaryResourceType.Image,
+        ),
+      );
 
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse(apiUrl),
-    );
-
-    request.headers['Authorization'] = "Bearer $apiKey";
-    request.files.add(await http.MultipartFile.fromPath('file', filePath));
-
-    final response = await request.send();
-
-    if (response.statusCode == 200) {
-      final body = await response.stream.bytesToString();
-      final url = RegExp(r'"fileUrl":"(.*?)"').firstMatch(body)?.group(1);
-
-      if (url != null) return url;
+      return response.secureUrl;
+    } catch (e) {
+      print("Cloudinary upload error: $e");
+      throw Exception("Image upload failed");
     }
-
-    throw Exception("Image upload failed");
   }
 }

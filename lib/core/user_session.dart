@@ -10,4 +10,8 @@ class UserSession {
 
   static String get userId => currentUser?.id ?? "";
   static String get userName => currentUser?.name ?? "";
+  static Future<void> clear() async {
+    final box = Hive.box<UserModel>("user_box");
+    await box.delete("user");
+  }
 }

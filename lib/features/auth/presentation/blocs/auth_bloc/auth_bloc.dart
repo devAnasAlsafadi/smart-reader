@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/user_session.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../../domain/usecases/get_current_user_usecase.dart';
 import '../../../domain/usecases/login_usecase.dart';
@@ -42,8 +43,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
 
     on<LogoutEvent>((event, emit) async {
-      await logoutUseCase();
-      emit(AuthUnauthenticated());
+      try{
+        await logoutUseCase();
+        await UserSession.clear();
+        emit(AuthUnauthenticated());
+        emit(LogoutSuccess());
+      }catch (e){
+        emit(LogoutError(e.toString()));
+      }
+
+
     });
   }
 

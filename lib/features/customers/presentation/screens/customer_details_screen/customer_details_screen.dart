@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
-import 'package:smart_reader/core/user_session.dart';
 import 'package:smart_reader/core/utils/app_snackbar.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_state.dart';
 
 import '../../../../../core/routes/navigation_manager.dart';
 import '../../../../../core/routes/route_name.dart';
 import '../../../../../core/theme/app_color.dart';
-import '../../../../../core/utils/app_dialog.dart';
 import '../../../../../core/utils/app_dimens.dart';
 import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
-import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
 import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_state.dart';
+import '../../../../payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
+import '../../../../payments/presentaion/blocs/billing_bloc/billing_event.dart';
+import '../../../../payments/presentaion/blocs/billing_bloc/billing_state.dart';
+import '../../../../payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
 import '../../../domain/entities/customer_entity.dart';
-import '../../blocs/customer_bloc/customer_bloc.dart';
-import '../../blocs/customer_bloc/customer_event.dart';
-import '../../blocs/customer_bloc/customer_state.dart';
-import '../../widgets/customer_details_larg_card.dart';
-import '../../widgets/reading_history_card.dart';
+import '../../widgets/add_payment_bottomsheet.dart';
+import '../../widgets/billing_wallet_card.dart';
+import '../../widgets/monthly_card.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
   const CustomerDetailsScreen({super.key, required this.customer});
@@ -32,10 +32,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<MeterReadingBloc>().add(LoadReadingsEvent(widget.customer.id));
-    context.read<MeterReadingBloc>().add(
-      SyncOfflineReadingsEvent(widget.customer.id),
-    );
+    context.read<BillingBloc>().add(LoadBillingEvent(widget.customer.id));
   }
 
   @override
@@ -47,105 +44,126 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<MeterReadingBloc, MeterReadingState>(
+            listenWhen: (prev, curr) =>
+            curr is ReadingsLoadedState || curr is ReadingDeletedState,
+            listener: (context, state) {
+              context.read<BillingBloc>().add(
+                LoadBillingEvent(widget.customer.id),
+              );
+              if(state is ReadingDeletedState){
+               AppSnackBar.success(context,"Reading deleted successfully");
+              }
+            },
 
-      body: BlocListener<CustomerBloc, CustomerState>(
-        listenWhen: (p, c) => p.deleteSuccess != c.deleteSuccess,
-        listener: (context, state) {
-          if (state.deleteSuccess) {
-           AppSnackBar.success(context, "Customer deleted successfully");
-            Navigator.pop(context);
-          }
-        },
-        child: Padding(
+          ),
+          BlocListener<PaymentBloc, PaymentState>(
+            listenWhen: (previous, current) =>
+            previous.deleteSuccess != current.deleteSuccess,
+            listener: (context, state) {
+              if (state.deleteSuccess) {
+                context.read<BillingBloc>().add(
+                  LoadBillingEvent(widget.customer.id),
+                );
+                AppSnackBar.success(context, "Payment deleted successfully");
+              }
+            },
+
+          ),
+
+        ], child: BlocBuilder<BillingBloc, BillingState>(builder:
+          (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.error != null) {
+          return Center(child: Text("Error: ${state.error}"));
+        }
+        if (state.summary == null) {
+          return const Center(child: Text("No billing data available"));
+        }
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(AppDimens.paddingLarge),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Customer Details", style: AppTextStyles.heading3),
-              SizedBox(height: AppDimens.verticalSpace),
-
-              CustomerLargeCard(customer: widget.customer),
-              const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  label: const Text("Add New Reading"),
-                  onPressed: () async {
-                    await NavigationManger.navigateTo(
-                      context, RouteNames.camera,
-                      arguments: widget.customer.id,);
-                    context.read<MeterReadingBloc>().add(
-                      LoadReadingsEvent(widget.customer.id),
-                    );
-                  },
-                ),
+              Text(
+                widget.customer.name,
+                style: AppTextStyles.heading2,
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.location_on, size: 16,
+                      color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    widget.customer.street,
+                    style: AppTextStyles.bodySecondary,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              BillingWalletCard(summary: state.summary!),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.bolt),
+                      label: const Text("Add Reading"),
+                      onPressed: () async {
+                        await NavigationManger.navigateTo(
+                          context,
+                          RouteNames.camera,
+                          arguments: widget.customer.id,
+                        );
+                        context.read<BillingBloc>().add(
+                          LoadBillingEvent(widget.customer.id),
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.attach_money),
+                      label: const Text("Add Payment"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accentGreen,
+                      ),
+                      onPressed: () {
+                        showAddPaymentSheet(
+                          context,
+                          customerId: widget.customer.id,
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
-              Text("Reading History", style: AppTextStyles.heading3),
-              const SizedBox(height: 5),
-              Expanded(
-                child: BlocBuilder<MeterReadingBloc, MeterReadingState>(
-                  builder: (context, state) {
-                    if (state is ReadingsLoadingState) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-                    if (state is ReadingsLoadedState) {
-                      if (state.readings.isEmpty) {
-                        return const Center(
-                          child: Text("No readings found"),
-                        );
-                      }
-
-                      return ListView.builder(
-                        itemCount: state.readings.length,
-                        itemBuilder: (context, i) {
-                          final r = state.readings[i];
-                          return ReadingHistoryCard(reading: r , customerId: widget.customer.id,);
-                        },
-                      );
-                    }
-
-                    return const SizedBox();
-                  },
-                ),
+              Text("Monthly Breakdown", style: AppTextStyles.heading3),
+              const SizedBox(height: 16),
+              ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: state.monthly.length,
+                itemBuilder: (context, index) {
+                  return MonthlyCard(month: state.monthly[index],
+                    customerId: widget.customer.id,);
+                },
               ),
-              const SizedBox(height: 20),
 
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentRed,
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  icon: const Icon(Icons.delete, color: Colors.white),
-                  label: const Text("Delete Customer"),
-                  onPressed: () => _onDeletePressed(context),
-                ),
-              ),
+
             ],
           ),
-        ),
+        );
+      },),
+
       ),
     );
   }
-
-  Future<void> _onDeletePressed(BuildContext context) async {
-    final confirmed = await AppDialog.showDeleteConfirm(
-      context,
-      title: "Delete Customer",
-      message: "This action will permanently remove this customer and their readings.",
-      confirmText: "Delete",
-      cancelText: "Cancel",
-    );
-
-    if (confirmed == true) {
-      context.read<CustomerBloc>().add(
-        DeleteCustomerEvent(widget.customer.id),
-      );
-      context.read<CustomerBloc>().add(LoadCustomersEvent(UserSession.userId));
-    }
-  }
-
 }

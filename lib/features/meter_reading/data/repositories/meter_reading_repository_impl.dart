@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../../../core/services/connectivity_service.dart';
 import '../../domain/entities/meter_reading_entity.dart';
 import '../../domain/repositories/meter_reading_repository.dart';
@@ -12,6 +14,7 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
   final UploadService uploader;
 
   MeterReadingRepositoryImpl(this.local, this.remote, this.uploader);
+
 
   @override
   Future<void> addReading(MeterReadingEntity entity) async {
@@ -32,11 +35,11 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
     if (!online) return;
 
     try {
-      String path = entity.imagePath;
-      String imageUrl = await uploader.upload(path);
+      final url = await UploadService().uploadImage(entity.imagePath);
+      print("Uploaded to: $url");
 
       final remoteModel = model.copyWith(
-        imageUrlHive: imageUrl,
+        imageUrlHive: url,
         imagePathHive: null,
       );
       await remote.addReading(remoteModel);
@@ -44,7 +47,7 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
         remoteModel.copyWith(syncedHive: true),
       );
       final updatedLocal = model.copyWith(
-        imageUrlHive: imageUrl,
+        imageUrlHive: url,
         syncedHive: true,
       );
       await local.updateReading(updatedLocal);
@@ -134,16 +137,17 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
       if (!c.synced) {
         try {
 
-          final imageUrl = await uploader.upload(c.imagePath);
+          final url = await UploadService().uploadImage(c.imagePath);
+          print("Uploaded to: $url");
           final remoteModel = c.copyWith(
-            imageUrlHive: imageUrl,
+            imageUrlHive: url,
             imagePathHive: null,
             syncedHive: true,
           );
 
           await remote.addReading(remoteModel);
           final updatedLocal = c.copyWith(
-            imageUrlHive: imageUrl,
+            imageUrlHive: url,
             syncedHive: true,
           );
 
