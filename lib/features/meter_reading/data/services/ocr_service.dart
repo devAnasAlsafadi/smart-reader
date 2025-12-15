@@ -18,12 +18,16 @@ class OcrService {
     try{
       final InputImage inputImage = InputImage.fromFile(imageFile);
       final RecognizedText recognizedText = await _textRecognizer.processImage(inputImage);
-      return recognizedText.text.replaceAll(RegExp(r'[^0-9]'), '');
+      // return recognizedText.text.replaceAll(RegExp(r'[^0-9]'), '');
+      print("recognizedText is  : ${recognizedText.text}");
+      return recognizedText.text;
     }catch (e){
       print("OCR error: $e");
       return "";
     }
   }
+
+
 
   void dispose() {
     _textRecognizer.close();

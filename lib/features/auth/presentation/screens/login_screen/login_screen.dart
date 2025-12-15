@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import '../../../../../core/theme/app_color.dart';
 import '../../../../../core/theme/app_text_style.dart';
 import '../../../../../core/utils/app_dimens.dart';
 import '../../../../../core/utils/validators.dart';
+import '../../../../../generated/locale_keys.g.dart';
 import '../../widgets/my_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -20,7 +22,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool signInRequired = true;
   late LoginScreenController controller;
 
   @override
@@ -62,11 +63,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
 
                 const SizedBox(height: AppDimens.verticalSpaceLarge),
-                Text("Sign in to MeterScan", style: AppTextStyles.heading2),
+                Text(
+                  LocaleKeys.login_title.tr(),
+                  style: AppTextStyles.heading2,
+                ),
                 const SizedBox(height: AppDimens.verticalSpaceSmall),
 
                 Text(
-                  "Manage customer meter readings with AI",
+                  LocaleKeys.login_subtitle.tr(),
                   textAlign: TextAlign.center,
                   style: AppTextStyles.bodySecondary,
                 ),
@@ -74,27 +78,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: AppDimens.verticalSpaceLarge),
 
                 Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Email", style: AppTextStyles.subtitle),
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(LocaleKeys.email.tr(), style: AppTextStyles.subtitle),
                 ),
                 MyTextField(
                   controller: controller.emailController,
-                  hintText: 'you@example.com',
+                  hintText: LocaleKeys.email_hint.tr(),
                   obscureText: false,
                   keyboardType: TextInputType.emailAddress,
                   prefixIcon: Icon(CupertinoIcons.mail_solid),
-                  validator: (val) => Validators.validateEmail(val),
+                  validator: Validators.validateEmail,
                 ),
 
                 const SizedBox(height: AppDimens.verticalSpace),
                 Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text("Password", style: AppTextStyles.subtitle),
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text( LocaleKeys.password.tr(), style: AppTextStyles.subtitle),
                 ),
                 const SizedBox(height: AppDimens.verticalSpaceSmall),
                 MyTextField(
                   controller: controller.passwordController,
-                  hintText: 'Enter your password',
+                  hintText: LocaleKeys.password_hint.tr(),
                   obscureText: controller.obscurePassword,
                   keyboardType: TextInputType.visiblePassword,
                   prefixIcon: const Icon(CupertinoIcons.lock_fill),
@@ -124,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       width: width * 0.75,
                       height: AppDimens.buttonHeight,
                       child: ElevatedButton(
-                        onPressed:() {
+                        onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             context.read<AuthBloc>().add(
                               LoginEvent(
@@ -132,9 +136,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 controller.passwordController.text.trim(),
                               ),
                             );
-                          }
-                          else{
-                          }
+                          } else {}
                         },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
@@ -144,15 +146,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
                         child: state is AuthLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text("Login"),
+                            ? const CircularProgressIndicator(
+                                color: Colors.white,
+                              )
+                            :  Text(LocaleKeys.login.tr()),
                       ),
                     );
                   },
                 ),
 
                 const SizedBox(height: AppDimens.verticalSpaceLarge),
-
               ],
             ),
           ),

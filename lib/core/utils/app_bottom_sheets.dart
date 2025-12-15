@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:smart_reader/core/extensions/localization_extension.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
-
+import '../../generated/locale_keys.g.dart';
 import 'app_dimens.dart';
 
 class AppBottomSheets {
@@ -24,12 +25,12 @@ class AppBottomSheets {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text("Select to Filter", style: AppTextStyles.heading2),
+              Text(LocaleKeys.select_filter.t, style: AppTextStyles.heading2),
               const SizedBox(height: AppDimens.verticalSpaceLarge),
 
               _optionButton(
                 icon: Icons.search_off,
-                text: "Search by Name",
+                text: LocaleKeys.search_by_name.t,
                 onTap: () {
                   Navigator.pop(context);
                   onName();
@@ -40,7 +41,7 @@ class AppBottomSheets {
 
               _optionButton(
                 icon: Icons.streetview,
-                text: "Search by Street",
+                text: LocaleKeys.search_by_street.t,
                 onTap: () {
                   Navigator.pop(context);
                   onStreet();

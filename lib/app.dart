@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
@@ -33,6 +34,7 @@ import 'package:smart_reader/features/payments/domain/usecases/get_payments_usec
 import 'package:smart_reader/features/payments/domain/usecases/sync_offline_payments_usecase.dart';
 import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
 import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
 
 import 'core/routes/app_router.dart';
 import 'core/routes/route_name.dart';
@@ -50,30 +52,51 @@ import 'features/meter_reading/data/models/meter_reading_model.dart';
 import 'features/meter_reading/data/repositories/meter_reading_repository_impl.dart';
 import 'features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
 
-class SmartReaderApp extends StatelessWidget {
+class SmartReaderApp extends StatefulWidget {
   const SmartReaderApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final meterReadingRepo = MeterReadingRepositoryImpl(
+  State<SmartReaderApp> createState() => _SmartReaderAppState();
+}
+
+class _SmartReaderAppState extends State<SmartReaderApp> {
+
+  late final MeterReadingRepositoryImpl meterReadingRepo;
+  late final CustomerRepositoryImpl customerRepo;
+  late final AuthRepositoryImpl authRepository;
+  late final PaymentRepositoryImpl paymentRepository;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    meterReadingRepo = MeterReadingRepositoryImpl(
       MeterReadingLocalDataSourceImpl(
         Hive.box<MeterReadingModel>("meter_reading_box"),
       ),
       MeterReadingRemoteDataSourceImpl(),
       UploadService(),
     );
-    final customerRepo = CustomerRepositoryImpl(
+
+    customerRepo = CustomerRepositoryImpl(
       CustomerLocalDataSourceImpl(Hive.box<CustomerModel>("customer_box")),
       CustomerRemoteDataSourceImpl(),
     );
-    final authRepository = AuthRepositoryImpl(
+
+    authRepository = AuthRepositoryImpl(
       AuthLocalDataSourceImpl(Hive.box<UserModel>("user_box")),
       AuthRemoteDataSourceImpl(),
     );
-    final paymentRepository = PaymentRepositoryImpl(
+
+    paymentRepository = PaymentRepositoryImpl(
       PaymentLocalDataSourceImpl(Hive.box<PaymentModel>("payment_box")),
       PaymentRemoteDataSourceImpl(),
     );
+  }
+  @override
+  Widget build(BuildContext context) {
+
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -127,8 +150,11 @@ class SmartReaderApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
-        title: 'Smart Meter Reader',
+        title: 'Smart Reader',
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         theme: AppTheme.lightTheme,
         initialRoute: RouteNames.splash,
         onGenerateRoute: AppRouter.onGenerateRoute,

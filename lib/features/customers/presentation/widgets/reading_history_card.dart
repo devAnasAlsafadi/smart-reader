@@ -1,16 +1,27 @@
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_date_utils.dart';
+import 'package:smart_reader/core/utils/app_dialog.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
 import 'package:smart_reader/core/utils/reading_utils.dart';
+
+// Features – Meter Reading
+import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
+
+// Features – Payments
 import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
 import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_event.dart';
 
-import '../../../../core/theme/app_text_style.dart';
-import '../../../../core/utils/app_date_utils.dart';
-import '../../../../core/utils/app_dimens.dart';
-import '../../../../core/utils/app_dialog.dart';
-import '../../../meter_reading/domain/entities/meter_reading_entity.dart';
-import '../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
-import '../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
 
 class ReadingHistoryCard extends StatelessWidget {
   final MeterReadingEntity reading;
@@ -37,16 +48,14 @@ class ReadingHistoryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ===== Header + Delete button =====
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                ReadingUtils.formatKwh(reading.reading),
+                ReadingUtils.formatMeterValue(reading.meterValue),
                 style: AppTextStyles.heading3,
               ),
 
-              // Delete Button
               IconButton(
                 icon: const Icon(
                   Icons.delete_outline,
@@ -61,7 +70,7 @@ class ReadingHistoryCard extends StatelessWidget {
 
           // Timestamp
           Text(
-            AppDateUtils.formatDateTime(reading.timestamp),
+            AppDateUtils.formatDateTime(context,reading.timestamp),
             style: AppTextStyles.caption,
           ),
         ],
@@ -72,10 +81,10 @@ class ReadingHistoryCard extends StatelessWidget {
   Future<void> _onDeletePressed(BuildContext context) async {
     final confirmed = await AppDialog.showDeleteConfirm(
       context,
-      title: "Delete Reading",
-      message: "This action will permanently remove this reading.",
-      confirmText: "Delete",
-      cancelText: "Cancel",
+      title:LocaleKeys.delete_reading_title.t,
+      message: LocaleKeys.delete_reading_message.t,
+      confirmText: LocaleKeys.delete.t,
+      cancelText:  LocaleKeys.cancel.t,
     );
 
     if (confirmed == true) {

@@ -60,7 +60,7 @@ class HistoryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${reading.reading} kWh",
+                  "${reading.meterValue} kWh",
                   style: AppTextStyles.subtitle.copyWith(
                     fontWeight: FontWeight.bold,
                   ),

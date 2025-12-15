@@ -1,7 +1,10 @@
 
 
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/sync_offline_readings_usecase.dart';
+import '../../../../../core/constants.dart';
 import 'meter_reading_event.dart';
 import 'meter_reading_state.dart';
 import '../../../domain/usecases/process_image_usecase.dart';
@@ -42,18 +45,29 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
     on<SaveReadingEvent>((event, emit) async {
       emit(ReadingSavedLoadingState());
       try {
+
+
+
         final entity = MeterReadingEntity(
           id:event.entity.id,
           customerId: event.entity.customerId,
-          reading: event.entity.reading,
+          meterValue: event.entity.meterValue,
+          consumption: event.entity.consumption,
+          cost: event.entity.cost,
           timestamp: DateTime.now(),
           imagePath: event.entity.imagePath,
           imageUrl: '',
           synced: false,
         );
 
-        await addReading(entity);
-        emit(ReadingSavedSuccessState());
+        final result = await addReading(entity);
+        print('cost is  : ${result.cost}');
+        print('consumption is  : ${result.consumption}');
+        print('previousValue is  : ${result.previousValue}');
+        print('newValue is  : ${result.newValue}');
+
+        emit(ReadingSavedSuccessState(result));
+
       } catch (e) {
         emit(ReadingSavedFailureState(e.toString()));
       }

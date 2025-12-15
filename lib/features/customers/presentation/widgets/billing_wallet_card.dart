@@ -1,9 +1,17 @@
+// Flutter
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
 import 'package:smart_reader/core/utils/app_dimens.dart';
-import '../../../payments/data/services/billing_summary.dart';
+
+// Features – Payments
+import 'package:smart_reader/features/payments/data/services/billing_summary.dart';
 
 class BillingWalletCard extends StatelessWidget {
   final BillingSummary summary;
@@ -31,17 +39,15 @@ class BillingWalletCard extends StatelessWidget {
                 padding: EdgeInsets.all(AppDimens.paddingSmall),
                   child: Icon(Icons.wallet,color: AppColors.white,)),
               SizedBox(width: 5,),
-              Text("Billing Wallet", style: AppTextStyles.heading3.copyWith(color: Colors.white)),
+              Text(LocaleKeys.billing_wallet.t, style: AppTextStyles.heading3.copyWith(color: Colors.white)),
             ],
           ),
           const SizedBox(height: 20),
           Row(
             children: [
-              Expanded(child: _item("Total Cost", summary.totalReadingsCost)),
+              Expanded(child: _item(LocaleKeys.total_cost.t, summary.totalReadingsCost)),
               SizedBox(width: 7,),
-              Expanded(child: _item("Total Paid", summary.totalPayments)),
-              SizedBox(width: 7,),
-              Expanded(child: _item("Balance", summary.balance)),
+              Expanded(child: _item(LocaleKeys.total_paid.t, summary.totalPayments)),
             ],
           ),
 
@@ -53,9 +59,26 @@ class BillingWalletCard extends StatelessWidget {
                 color: AppColors.primaryLight.withValues(alpha: .7),
                 borderRadius: BorderRadius.circular(AppDimens.radius),
               ),
-              child: Text(
-                "Customer owes ₪${summary.balance.toStringAsFixed(2)}",
-                style: const TextStyle(color: Colors.white, fontSize: 16),
+              child: Row(
+                children: [
+                  Text(
+                    "${LocaleKeys.customer_owes.t} : ",
+                    style: AppTextStyles.heading3.copyWith(color: AppColors.white),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: EdgeInsets.all(5),
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(AppDimens.radius)
+                      ),
+                      child: Text(
+                        "  ₪ ${summary.balance.toStringAsFixed(2)}",
+                        style: AppTextStyles.heading3.copyWith(color:summary.balance > 0  ? AppColors.red : AppColors.green  ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           )
@@ -73,17 +96,18 @@ class BillingWalletCard extends StatelessWidget {
       ),
       padding: EdgeInsets.all(AppDimens.padding),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(title, style: AppTextStyles.caption.copyWith(color: Colors.white70)),
+          Text(title, style: AppTextStyles.body.copyWith(color: Colors.white70)),
           const SizedBox(height: 4),
           Align(
              alignment: Alignment.center,
             child: Text(
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-              "₪ ${value.toStringAsFixed(3)}",
-              style: AppTextStyles.bodySecondary.copyWith(color: Colors.white),
+              "₪ ${value.toStringAsFixed(1)}",
+              style: AppTextStyles.heading3.copyWith(color: Colors.white),
             ),
           ),
         ],

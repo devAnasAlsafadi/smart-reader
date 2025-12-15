@@ -1,17 +1,29 @@
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smart_reader/core/theme/app_color.dart';
-import 'package:smart_reader/core/theme/app_text_style.dart';
-import 'package:smart_reader/core/utils/app_snackbar.dart';
-import 'package:smart_reader/features/auth/presentation/widgets/my_text_field.dart';
+
+// Third-party
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
-import '../../../payments/presentaion/blocs/payment_bloc/payment_event.dart';
-import '../../../payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
-import '../../../payments/presentaion/blocs/billing_bloc/billing_event.dart';
-import '../../../payments/domain/entities/payment_entity.dart';
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/theme/app_color.dart';
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_snackbar.dart';
+
+// Shared Widgets
+import 'package:smart_reader/features/auth/presentation/widgets/my_text_field.dart';
+
+// Features – Payments
+import 'package:smart_reader/features/payments/domain/entities/payment_entity.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_event.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_event.dart';
 
 void showAddPaymentSheet(BuildContext context, {required String customerId}) {
   showModalBottomSheet(
@@ -39,6 +51,13 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
   bool isLoading = false;
 
   @override
+  void dispose() {
+    amountCtrl.dispose();
+    noteCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DraggableScrollableSheet(
       initialChildSize: 0.55,
@@ -61,10 +80,10 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      children: const [
+                      children:  [
                         Icon(Icons.attach_money, color: AppColors.accentGreen),
                         SizedBox(width: 8),
-                        Text("Add Payment",
+                        Text(LocaleKeys.add_payment.t,
                             style: AppTextStyles.heading3),
                       ],
                     ),
@@ -77,31 +96,31 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                 const SizedBox(height: 20),
 
                 // --- Amount Field ---
-                Text("Payment Amount *", style: AppTextStyles.subtitle),
+                Text("${LocaleKeys.payment_amount.t} *", style: AppTextStyles.subtitle),
                 const SizedBox(height: 6),
                 MyTextField(
                   controller: amountCtrl,
                   keyboardType: TextInputType.number,
-                   hintText: "0.00",
+                   hintText: LocaleKeys.payment_amount_hint.t,
                   obscureText: false,
                 ),
 
                 const SizedBox(height: 20),
 
                 // --- Note Field ---
-                Text("Note (Optional)", style: AppTextStyles.subtitle),
+                Text(LocaleKeys.payment_note.t, style: AppTextStyles.subtitle),
                 const SizedBox(height: 6),
                 MyTextField(
                   controller: noteCtrl,
                   obscureText: false,
-                  hintText: "e.g., Monthly payment", keyboardType: TextInputType.text,
+                  hintText: LocaleKeys.payment_note_hint.t, keyboardType: TextInputType.text,
 
 
                 ),
 
                 const SizedBox(height: 10),
-                const Text(
-                  "Payment will be recorded with today's date & time.",
+                 Text(
+                  LocaleKeys.payment_info.t,
                   style: AppTextStyles.caption,
                 ),
 
@@ -116,7 +135,7 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                           backgroundColor: Colors.grey.shade300,
                         ),
                         onPressed: () => Navigator.pop(context),
-                        child:  Text("Cancel",style: AppTextStyles.heading3.copyWith(fontWeight: FontWeight.w500),),
+                        child:  Text(LocaleKeys.cancel.t,style: AppTextStyles.heading3.copyWith(fontWeight: FontWeight.w500),),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -129,7 +148,7 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                           final amount = double.tryParse(amountCtrl.text);
                           if (amount == null || amount <= 0) {
                             Fluttertoast.showToast(
-                              msg: "Invalid amount",
+                              msg: LocaleKeys.invalid_amount.t,
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.CENTER,
                               backgroundColor: Colors.red,
@@ -161,9 +180,9 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                           setState(() => isLoading = false);
                           Navigator.pop(context);
 
-                          AppSnackBar.success(context, "Payment added");
+                          AppSnackBar.success(context, LocaleKeys.payment_added_success.t,);
                         },
-                        child: const Text("Add Payment"),
+                        child:  Text(LocaleKeys.add_payment.t),
                       ),
                     ),
                   ],

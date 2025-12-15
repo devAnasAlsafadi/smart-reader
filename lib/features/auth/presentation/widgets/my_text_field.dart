@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 class MyTextField extends StatelessWidget {
-  const MyTextField({this.fillColor,super.key, required this.controller, required this.hintText, required this.obscureText, required this.keyboardType, this.suffixIcon, this.onTap, this.prefixIcon, this.validator, this.focusNode, this.errorMsg, this.onChange, this.border});
+  const MyTextField({this.fillColor,super.key, required this.controller, required this.hintText, required this.obscureText, required this.keyboardType,this.textInputAction, this.suffixIcon, this.onTap, this.prefixIcon, this.validator, this.focusNode, this.errorMsg, this.onChange, this.border});
 
   final TextEditingController controller;
   final String hintText;
@@ -15,6 +15,8 @@ class MyTextField extends StatelessWidget {
   final Color? fillColor;
   final OutlineInputBorder? border;
   final void Function(String)? onChange;
+  final TextInputAction? textInputAction;
+
 
 
 
@@ -27,9 +29,9 @@ class MyTextField extends StatelessWidget {
       keyboardType: keyboardType,
       focusNode: focusNode,
       onTap: onTap,
-      textInputAction: TextInputAction.next,
       onChanged: onChange,
       autofocus: false,
+      textInputAction: textInputAction ?? TextInputAction.next,
 
       decoration: InputDecoration(
         suffixIcon: suffixIcon,

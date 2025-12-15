@@ -1,23 +1,39 @@
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smart_reader/core/theme/app_text_style.dart';
-import 'package:smart_reader/core/utils/app_snackbar.dart';
-import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_state.dart';
 
-import '../../../../../core/routes/navigation_manager.dart';
-import '../../../../../core/routes/route_name.dart';
-import '../../../../../core/theme/app_color.dart';
-import '../../../../../core/utils/app_dimens.dart';
+// Localization
+import 'package:easy_localization/easy_localization.dart';
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/core/routes/route_name.dart';
+import 'package:smart_reader/core/theme/app_color.dart';
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+import 'package:smart_reader/core/utils/app_snackbar.dart';
+
+// Features – Meter Reading
 import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
 import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_state.dart';
-import '../../../../payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
-import '../../../../payments/presentaion/blocs/billing_bloc/billing_event.dart';
-import '../../../../payments/presentaion/blocs/billing_bloc/billing_state.dart';
-import '../../../../payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
-import '../../../domain/entities/customer_entity.dart';
-import '../../widgets/add_payment_bottomsheet.dart';
-import '../../widgets/billing_wallet_card.dart';
-import '../../widgets/monthly_card.dart';
+
+
+// Features – Payments
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_event.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_state.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_state.dart';
+
+// Features – Customers
+import 'package:smart_reader/features/customers/domain/entities/customer_entity.dart';
+import 'package:smart_reader/features/customers/presentation/widgets/add_payment_bottomsheet.dart';
+import 'package:smart_reader/features/customers/presentation/widgets/billing_wallet_card.dart';
+import 'package:smart_reader/features/customers/presentation/widgets/monthly_card.dart';
+
+
 
 class CustomerDetailsScreen extends StatefulWidget {
   const CustomerDetailsScreen({super.key, required this.customer});
@@ -48,13 +64,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
         listeners: [
           BlocListener<MeterReadingBloc, MeterReadingState>(
             listenWhen: (prev, curr) =>
-            curr is ReadingsLoadedState || curr is ReadingDeletedState,
+            curr is ReadingSavedSuccessState ||
+                curr is ReadingDeletedState,
             listener: (context, state) {
               context.read<BillingBloc>().add(
                 LoadBillingEvent(widget.customer.id),
               );
               if(state is ReadingDeletedState){
-               AppSnackBar.success(context,"Reading deleted successfully");
+               AppSnackBar.success(context, LocaleKeys.reading_deleted_success.tr());
               }
             },
 
@@ -67,7 +84,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                 context.read<BillingBloc>().add(
                   LoadBillingEvent(widget.customer.id),
                 );
-                AppSnackBar.success(context, "Payment deleted successfully");
+                AppSnackBar.success(context, LocaleKeys.payment_deleted_success.tr());
               }
             },
 
@@ -79,10 +96,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         if (state.error != null) {
-          return Center(child: Text("Error: ${state.error}"));
+          return Center(child: Text( "${LocaleKeys.generic_error.tr()} ${state.error}",));
         }
         if (state.summary == null) {
-          return const Center(child: Text("No billing data available"));
+          return  Center(child: Text(LocaleKeys.no_billing_data.tr()));
         }
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AppDimens.paddingLarge),
@@ -113,15 +130,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.bolt),
-                      label: const Text("Add Reading"),
+                      label:  Text(LocaleKeys.add_reading.tr()),
                       onPressed: () async {
                         await NavigationManger.navigateTo(
                           context,
                           RouteNames.camera,
                           arguments: widget.customer.id,
-                        );
-                        context.read<BillingBloc>().add(
-                          LoadBillingEvent(widget.customer.id),
                         );
                       },
                     ),
@@ -130,7 +144,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.attach_money),
-                      label: const Text("Add Payment"),
+                      label:  Text(LocaleKeys.add_payment.tr()),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.accentGreen,
                       ),
@@ -145,7 +159,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                 ],
               ),
               const SizedBox(height: 30),
-              Text("Monthly Breakdown", style: AppTextStyles.heading3),
+              Text(LocaleKeys.monthly_breakdown.t, style: AppTextStyles.heading3),
               const SizedBox(height: 16),
               ListView.builder(
                 physics: const NeverScrollableScrollPhysics(),
@@ -156,8 +170,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen> {
                     customerId: widget.customer.id,);
                 },
               ),
-
-
             ],
           ),
         );

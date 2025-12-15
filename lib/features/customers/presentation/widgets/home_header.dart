@@ -1,7 +1,15 @@
+// Flutter
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_text_style.dart';
-import '../../../../../core/theme/app_color.dart';
-import '../../../../../core/user_session.dart';
+
+// Localization
+import 'package:easy_localization/easy_localization.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/theme/app_color.dart';
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/user_session.dart';
+
 
 class HomeHeader extends StatelessWidget {
   final VoidCallback onSettings;
@@ -17,7 +25,7 @@ class HomeHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Welcome back,",
+              LocaleKeys.home_welcome.tr(),
               style: AppTextStyles.subtitle.copyWith(
                 color: AppColors.textSecondary,
                 fontSize: 14,

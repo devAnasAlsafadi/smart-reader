@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_reader/core/extensions/localization_extension.dart';
 import 'package:smart_reader/core/utils/app_dimens.dart';
 import 'package:smart_reader/core/utils/app_snackbar.dart';
 
 import '../../../../../core/enum/location_mode.dart';
 import '../../../../../core/theme/app_color.dart';
 import '../../../../../core/theme/app_text_style.dart';
+import '../../../../../generated/locale_keys.g.dart';
 import '../../blocs/customer_bloc/customer_bloc.dart';
 import '../../blocs/customer_bloc/customer_state.dart';
 import '../../widgets/customer_input_section.dart';
@@ -44,7 +46,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
           p.addSuccess != c.addSuccess || p.addError != c.addError,
       listener: (context, state) {
         if (state.addSuccess) {
-          AppSnackBar.success(context, "Customer added successfully");
+          AppSnackBar.success(context, LocaleKeys.customer_added_success.t);
           Navigator.pop(context);
         }
 
@@ -54,21 +56,15 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
       },
       builder: (context, state) {
         return Scaffold(
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ),
-
+          appBar: AppBar(),
           body: SingleChildScrollView(
             padding: const EdgeInsets.all(AppDimens.padding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Add Customer", style: AppTextStyles.heading3),
+                Text(LocaleKeys.add_customer_title.t, style: AppTextStyles.heading3),
                 Text(
-                  "Enter customer details",
+                  LocaleKeys.add_customer_subtitle.t,
                   style: AppTextStyles.subtitle.copyWith(
                     fontSize: 15,
                     color: AppColors.textSecondary,
@@ -99,7 +95,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                     onPressed:() =>  state.isLoadingAdd ? null : controller.saveCustomer(context),
                     child: state.isLoadingAdd
                         ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Save Customer"),
+                        :  Text(LocaleKeys.save_customer.t),
                   ),
                 ),
 

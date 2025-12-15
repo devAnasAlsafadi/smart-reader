@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../data/repositories/meter_reading_repository_impl.dart';
 import '../../../domain/entities/meter_reading_entity.dart';
 
 abstract class MeterReadingState extends Equatable {
@@ -33,7 +34,11 @@ class ReadingsLoadedState extends MeterReadingState {
 }
 
 class ReadingSavedLoadingState extends MeterReadingState {}
-class ReadingSavedSuccessState extends MeterReadingState {}
+class ReadingSavedSuccessState extends MeterReadingState {
+
+  final ReadingCalculationResult? result;
+  ReadingSavedSuccessState(this.result);
+}
 
 class ReadingSavedFailureState extends MeterReadingState {
   final String message;

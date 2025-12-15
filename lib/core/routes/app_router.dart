@@ -52,8 +52,8 @@ class AppRouter {
       case RouteNames.login:
         return MaterialPageRoute(builder: (_) =>  LoginScreen());
       case RouteNames.editReadingScreen:
-        final reading = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) =>  EditReadingScreen(initialReading: reading,));
+        final meterValue = settings.arguments as double;
+        return MaterialPageRoute(builder: (_) =>  EditReadingScreen(initialReading: meterValue,));
       case RouteNames.extractReadingScreen:
         final args = settings.arguments as Map<String, dynamic>;
         final readings = args['readings'] as List<String>;

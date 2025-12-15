@@ -1,12 +1,21 @@
+// Flutter
 import 'package:flutter/material.dart';
-import 'package:smart_reader/core/routes/route_name.dart';
 
-import '../../../../../core/utils/app_dimens.dart';
-import '../../../../../core/routes/navigation_manager.dart';
-import '../../../../../core/theme/app_color.dart';
-import '../../../../../core/theme/app_text_style.dart';
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/core/routes/route_name.dart';
+import 'package:smart_reader/core/theme/app_color.dart';
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+
+// Widgets
 import '../../widgets/key_text_item.dart';
 import '../../widgets/step_card_item.dart';
+
 
 class GuideScreen extends StatelessWidget {
   const GuideScreen({super.key});
@@ -27,9 +36,9 @@ class GuideScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("How It Works", style: AppTextStyles.heading1),
+            Text(  LocaleKeys.how_it_works.t, style: AppTextStyles.heading1),
             const SizedBox(height: 4),
-            Text("Simple 3-step process", style: AppTextStyles.subtitle),
+            Text(  LocaleKeys.simple_3_steps.t, style: AppTextStyles.subtitle),
             const SizedBox(height: 24),
             Expanded(child: SingleChildScrollView(
               child: Column(
@@ -37,29 +46,28 @@ class GuideScreen extends StatelessWidget {
                 children: [
                   StepCardItem(
                     icon: Icons.camera_alt_outlined,
-                    title: "Capture",
-                    step: "Step 1",
+                    title: LocaleKeys.step_capture.t,
+                    step: LocaleKeys.step1.t,
                     color: Colors.blue.shade100.withValues(alpha: .3),
-                    description:
-                    "Point your camera at the electricity meter and take a clear photo.",
+                    description: LocaleKeys.step_capture_desc.t,
+
                   ),
                   const SizedBox(height: 16),
                   StepCardItem(
                     icon: Icons.auto_awesome,
-                    title: "Extract",
-                    step: "Step 2",
+                    title: LocaleKeys.step_extract.t,
+                    step: LocaleKeys.step2.t,
                     color: Colors.purple.shade100.withValues(alpha: .3),
-                    description:
-                    "Our AI OCR instantly detects the numeric digits on your meter.",
+                    description: LocaleKeys.step_extract_desc.t,
+
                   ),
                   const SizedBox(height: 16),
                   StepCardItem(
                     icon: Icons.check_circle_outline,
-                    title: "Confirm",
-                    step: "Step 3",
+                    title: LocaleKeys.step_confirm.t,
+                    step: LocaleKeys.step3.t,
                     color: Colors.green.shade100.withValues(alpha: .3),
-                    description:
-                    "Review the extracted reading, edit if needed, and save it to your history.",
+                    description: LocaleKeys.step_confirm_desc.t,
                   ),
                   const SizedBox(height: 26),
                   _buildFeaturesCard(),
@@ -74,7 +82,7 @@ class GuideScreen extends StatelessWidget {
               height: 55,
               child: ElevatedButton.icon(
                 icon: const Icon(Icons.flash_on, color: Colors.white),
-                label: const Text("Get Started"),
+                label:  Text(LocaleKeys.get_started.t),
                 onPressed: () => NavigationManger.navigateTo(context, RouteNames.camera),
               ),
             ),
@@ -95,19 +103,19 @@ class GuideScreen extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children:  [
           Row(
             children: [
               Icon(Icons.bolt, color: AppColors.primary),
               SizedBox(width: 8),
-              Text("Key Features", style: AppTextStyles.heading2),
+              Text(LocaleKeys.key_features.t, style: AppTextStyles.heading2),
             ],
           ),
           SizedBox(height: 14),
-          KeyTextItem("On-device OCR — your data never leaves your phone."),
-          KeyTextItem("High accuracy with confidence indicators."),
-          KeyTextItem("Manual editing for full control."),
-          KeyTextItem("Complete reading history with timestamps."),
+          KeyTextItem(LocaleKeys.feature_on_device.t),
+          KeyTextItem(LocaleKeys.feature_accuracy.t),
+          KeyTextItem(LocaleKeys.feature_manual_edit.t),
+          KeyTextItem(LocaleKeys.feature_history.t),
         ],
       ),
     );
@@ -122,12 +130,12 @@ class GuideScreen extends StatelessWidget {
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Icon(Icons.lightbulb_outline, color: Colors.orange),
-          SizedBox(width: 12),
-          Expanded(
+        children:  [
+          const Icon(Icons.lightbulb_outline, color: Colors.orange),
+          const SizedBox(width: 12),
+            Expanded(
             child: Text(
-              "Pro tip: Ensure good lighting and keep your phone steady for the best results.",
+              LocaleKeys.pro_tip.t,
               style: AppTextStyles.bodySecondary,
             ),
           ),

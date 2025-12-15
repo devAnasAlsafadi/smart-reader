@@ -9,6 +9,8 @@ abstract class MeterReadingLocalDataSource {
   Future<void> deleteReading(String id);
   Future<void> updateReading(MeterReadingModel model);
   Future<MeterReadingModel?> getById(String meterReadingId);
+  Future<MeterReadingModel?> getLastReading(String customerId);
+
 }
 
 
@@ -42,6 +44,21 @@ class MeterReadingLocalDataSourceImpl implements MeterReadingLocalDataSource{
     } catch (_) {
       return null;
     }
+  }
+
+  @override
+  Future<MeterReadingModel?> getLastReading(String customerId) async {
+    final readings = box.values
+        .where((e) => e.customerId == customerId && !e.isDeleted)
+        .toList();
+
+    if (readings.isEmpty) return null;
+
+    readings.sort(
+          (a, b) => b.timestamp.compareTo(a.timestamp),
+    );
+
+    return readings.first;
   }
 
 }

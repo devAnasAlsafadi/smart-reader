@@ -1,13 +1,26 @@
+// Dart
 import 'dart:io';
+
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
+
+// Third-party
 import 'package:uuid/uuid.dart';
-import '../../../../../core/utils/app_dimens.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/core/routes/route_name.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
-import '../../../../../core/routes/navigation_manager.dart';
-import '../../../../../core/routes/route_name.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+
+// Features – Meter Reading
+import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 import '../../blocs/meter_reading/meter_reading_bloc.dart';
 import '../../blocs/meter_reading/meter_reading_event.dart';
 import '../../blocs/meter_reading/meter_reading_state.dart';
@@ -16,7 +29,11 @@ class PreviewScreen extends StatefulWidget {
   final File imageFile;
   final String customerId;
 
-  const PreviewScreen({super.key, required this.imageFile, required this.customerId});
+  const PreviewScreen({
+    super.key,
+    required this.imageFile,
+    required this.customerId,
+  });
 
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
@@ -32,41 +49,47 @@ class _PreviewScreenState extends State<PreviewScreen> {
     return BlocListener<MeterReadingBloc, MeterReadingState>(
       listener: (context, state) async {
         if (state is OcrProcessingState) {
-          _isProcessing = true;
-          setState(() {});
-        }
+          if (!mounted) return;
+          setState(() {
+            _isProcessing = true;
+          });     }
         if (state is OcrTextReadyState) {
-          _isProcessing = false;
+          if (!mounted) return;
+          setState(() {
+            _isProcessing = false;
+          });
           _rawText = state.rawText;
-          setState(() {});
           context.read<MeterReadingBloc>().add(ExtractDigitsEvent(_rawText));
         }
         if (state is DigitsExtractedState) {
-          _isProcessing = false;
+          if (!mounted) return;
+          setState(() {
+            _isProcessing = false;
+          });
           _digits = state.digits;
-          setState(() {});
-
-          print('_rawText is :$_rawText');
           NavigationManger.navigateTo(
             context,
             RouteNames.extractReadingScreen,
             arguments: {
               'readings': _digits,
               'rawText': _rawText,
-              'entity':entity,
+              'entity': entity,
             },
           );
         }
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(title: const Text('Preview photo'), centerTitle: true),
+        appBar: AppBar(
+          title: Text(LocaleKeys.preview_photo.t),
+          centerTitle: true,
+        ),
         body: Padding(
           padding: EdgeInsets.all(AppDimens.paddingLarge),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Review your captured image', style: AppTextStyles.subtitle),
+              Text(  LocaleKeys.review_captured_image.t, style: AppTextStyles.subtitle),
               const SizedBox(height: AppDimens.verticalSpaceLarge),
               Expanded(
                 child: Center(
@@ -100,16 +123,15 @@ class _PreviewScreenState extends State<PreviewScreen> {
               _isProcessing
                   ? Align(
                       alignment: Alignment.center,
-                      child: CircularProgressIndicator(),
+                      child: const CircularProgressIndicator(),
                     )
                   : SizedBox(
                       width: double.infinity,
                       height: 52,
                       child: ElevatedButton.icon(
                         icon: const Icon(Icons.auto_awesome),
-                        label: const Text("Extract Reading"),
+                        label: Text(LocaleKeys.extract_reading.t),
                         onPressed: () async {
-
                           context.read<MeterReadingBloc>().add(
                             ProcessImageEvent(widget.imageFile),
                           );
@@ -123,7 +145,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 child: OutlinedButton.icon(
                   onPressed: () => NavigationManger.pop(context),
                   icon: const Icon(Icons.refresh),
-                  label: const Text("Retake Photo"),
+                  label: Text(LocaleKeys.retake_photo.t),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.textPrimary,
                     side: const BorderSide(color: AppColors.border),
@@ -143,15 +165,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
     );
   }
 
-   MeterReadingEntity get  entity {
-     final uuid = Uuid();
-     return  MeterReadingEntity(
-       id: uuid.v4(),
-       customerId: widget.customerId,
-       reading: "",
-       imagePath: widget.imageFile.path,
-       timestamp: DateTime.now(),
-       synced: false,
-     );
-   }
+  MeterReadingEntity get entity {
+    return MeterReadingEntity(
+      id: const Uuid().v4(),
+      customerId: widget.customerId,
+      meterValue: 0.0,
+      cost: 0.0,
+      consumption: 0.0,
+      imagePath: widget.imageFile.path,
+      timestamp: DateTime.now(),
+      synced: false,
+    );
+  }
 }

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -7,6 +8,7 @@ import 'package:smart_reader/features/auth/presentation/screens/splash_screen/sp
 
 import '../../../../../core/utils/app_assets.dart';
 import '../../../../../core/utils/app_dimens.dart';
+import '../../../../../generated/locale_keys.g.dart';
 import '../../../../meter_reading/presentaion/widgets/loading_dots_widget.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -17,7 +19,6 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   late SplashScreenController _controller;
 
   @override
@@ -26,10 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!context.mounted) return;
     _controller = SplashScreenController();
     _controller.startApp(context);
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -38,38 +36,38 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(AppDimens.padding),
-              decoration: BoxDecoration(
-                color: AppColors.primaryLight.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
-              ),
-              child: SvgPicture.asset(AppAssets.logo,width: AppDimens.iconLarge,
-                height: AppDimens.iconLarge,),
-            ),
+            _buildLogo(),
             SizedBox(height: AppDimens.verticalSpaceLarge),
-             Text(
-              "MeterScan",
-              style: AppTextStyles.heading2
-            ),
+            Text(LocaleKeys.splash_title.tr(), style: AppTextStyles.heading2),
             const SizedBox(height: AppDimens.verticalSpaceSmall),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(horizontal: AppDimens.paddingLarge),
               child: Text(
-                "Powered by AI-driven vision technology to read your electricity meter instantly and accurately.",
+                LocaleKeys.splash_subtitle.tr(),
                 textAlign: TextAlign.center,
-                style: AppTextStyles.bodySecondary
+                style: AppTextStyles.bodySecondary,
               ),
             ),
             const SizedBox(height: AppDimens.verticalSpaceLarge),
             const LoadingDots(),
-
           ],
         ),
       ),
     );
   }
+
+  Container _buildLogo() {
+    return Container(
+      padding: const EdgeInsets.all(AppDimens.padding),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
+      ),
+      child: SvgPicture.asset(
+        AppAssets.logo,
+        width: AppDimens.iconLarge,
+        height: AppDimens.iconLarge,
+      ),
+    );
+  }
 }
-
-
-

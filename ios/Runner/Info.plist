@@ -57,5 +57,10 @@
 
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
     <string>This app requires location to add customer coordinates.</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+    	<string>en</string>
+    	<string>ar</string>
+    </array>
 </dict>
 </plist>

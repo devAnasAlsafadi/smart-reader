@@ -1,12 +1,21 @@
+// Flutter
 import 'package:flutter/material.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
 import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/core/routes/route_name.dart';
+import 'package:smart_reader/core/theme/app_color.dart';
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+
+// Features – Meter Reading
 import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/widgets/reading_option_list.dart';
-import '../../../../../core/utils/app_dimens.dart';
 
-import '../../../../../core/routes/route_name.dart';
-import '../../../../../core/theme/app_color.dart';
-import '../../../../../core/theme/app_text_style.dart';
 
 class ExtractReadingScreen extends StatefulWidget {
   const ExtractReadingScreen({
@@ -31,7 +40,7 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text("Reading Extracted"),
+        title: Text(LocaleKeys.reading_extracted.t),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => NavigationManger.pop(context),
@@ -47,18 +56,18 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Center(
+           Center(
             child: Column(
               children: [
-                SizedBox(height: 12),
-                Icon(
+                const SizedBox(height: 12),
+                const Icon(
                   Icons.auto_awesome,
                   size: 48,
                   color: AppColors.primaryLight,
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  "AI detected multiple possible readings.\nPlease select the correct one.",
+                  LocaleKeys.ai_detected_multiple.t,
                   textAlign: TextAlign.center,
                   style: AppTextStyles.subtitle,
                 ),
@@ -80,8 +89,10 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
                 borderRadius: BorderRadius.circular(AppDimens.radius),
                 side: BorderSide(color: AppColors.grey,width: 2),
               ),
-              title: const Text("Raw OCR Text", style: AppTextStyles.body),
-              children: [
+              title: Text(
+                LocaleKeys.raw_ocr_text.t,
+                style: AppTextStyles.body,
+              ),              children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(widget.rawText, style: AppTextStyles.body),
@@ -91,7 +102,7 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
           ),
 
           const SizedBox(height: 16),
-          const Text("Detected Readings", style: AppTextStyles.heading2),
+           Text(  LocaleKeys.detected_readings.t, style: AppTextStyles.heading2),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
@@ -116,7 +127,7 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
                   ? null
                   : () {
                 final updated = widget.entity.copyWithNewData(
-                  reading: selectedReading,
+                  meterValue: double.tryParse(selectedReading!),
                 );
                       NavigationManger.navigateTo(context, RouteNames.result,arguments:
                       updated);
@@ -124,15 +135,15 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.accentGreen,
               ),
-              child: const Text("Confirm Reading"),
+              child: Text(LocaleKeys.confirm_reading.t),
             ),
           ),
           const SizedBox(height: 12),
           Center(
             child: TextButton(
               onPressed: () => NavigationManger.pop(context),
-              child: const Text(
-                "Try Again",
+              child:  Text(
+                LocaleKeys.try_again.t,
                 style: TextStyle(color: AppColors.textSecondary),
               ),
             ),

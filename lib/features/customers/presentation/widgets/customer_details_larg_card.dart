@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_reader/core/theme/app_color.dart';
 
 import '../../domain/entities/customer_entity.dart';
 
@@ -13,7 +14,7 @@ class CustomerLargeCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -28,25 +29,25 @@ class CustomerLargeCard extends StatelessWidget {
         children: [
           Text(
             customer.name,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppColors.black87,
             ),
           ),
           const SizedBox(height: 8),
 
           Row(
             children: [
-              const Icon(Icons.location_on_outlined,
-                  size: 18, color: Colors.blue),
+               Icon(Icons.location_on_outlined,
+                  size: 18, color: AppColors.blue),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
                   customer.address,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontSize: 14,
-                    color: Colors.black54,
+                    color: AppColors.black54,
                   ),
                 ),
               ),
@@ -56,7 +57,7 @@ class CustomerLargeCard extends StatelessWidget {
           const SizedBox(height: 4),
 
           Padding(
-            padding: const EdgeInsets.only(left: 24),
+            padding: const EdgeInsetsDirectional.only(start: 24),
             child: Text(
               customer.street,
               style: const TextStyle(

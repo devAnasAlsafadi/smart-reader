@@ -5,17 +5,15 @@ import 'package:smart_reader/core/routes/navigation_manager.dart';
 import 'package:smart_reader/core/routes/route_name.dart';
 import 'package:smart_reader/core/user_session.dart';
 import 'package:smart_reader/features/customers/presentation/blocs/customer_bloc/customer_event.dart';
-
 import '../blocs/customer_bloc/customer_bloc.dart';
 import '../blocs/customer_bloc/customer_state.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
 import 'customer_card.dart';
-
-
 
 class CustomerListView extends StatelessWidget {
   const CustomerListView({super.key});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -26,9 +24,8 @@ class CustomerListView extends StatelessWidget {
         }
 
         if (state.filteredCustomers.isEmpty) {
-          return const Center(child: Text("No customers found"));
+          return Center(child: Text(LocaleKeys.no_customers_found.tr()));
         }
-
         return AnimationLimiter(
           child: ListView.builder(
             itemCount: state.filteredCustomers.length,
@@ -45,9 +42,15 @@ class CustomerListView extends StatelessWidget {
                       name: c.name,
                       city: c.address,
                       street: c.street,
-                      onTap: ()async {
-                       await  NavigationManger.navigateTo(context, RouteNames.customerDetails,arguments: c);
-                        context.read<CustomerBloc>().add(LoadCustomersEvent(UserSession.userId));
+                      onTap: () async {
+                        await NavigationManger.navigateTo(
+                          context,
+                          RouteNames.customerDetails,
+                          arguments: c,
+                        );
+                        context.read<CustomerBloc>().add(
+                          LoadCustomersEvent(UserSession.userId),
+                        );
                       },
                     ),
                   ),

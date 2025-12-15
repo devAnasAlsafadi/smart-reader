@@ -3,7 +3,11 @@
 class MeterReadingEntity {
   final String id;
   final String customerId;
-   String reading;
+   double meterValue;
+  final double consumption;
+  final double cost;
+
+
   final DateTime timestamp;
   final String imagePath;
   final String? imageUrl;
@@ -17,7 +21,9 @@ class MeterReadingEntity {
     required this.id,
 
     required this.customerId,
-    required this.reading,
+    required this.meterValue,
+    required this.consumption,
+    required this.cost,
     required this.timestamp,
     required this.imagePath,
     required this.synced,
@@ -28,19 +34,23 @@ class MeterReadingEntity {
   static final empty = MeterReadingEntity(
     id: '',
     customerId: '',
-    reading: '',
     timestamp: DateTime.fromMillisecondsSinceEpoch(0),
     imagePath: '',
     imageUrl: '',
     synced: false,
-    isDeleted: false
+    isDeleted: false,
+    consumption: 0.0,
+    cost: 0.0,
+    meterValue: 0.0
 
   );
 
   MeterReadingEntity copyWithNewData({
     String? id,
     String? customerId,
-    String? reading,
+    double? meterValue,
+    double? cost,
+    double? consumption,
     DateTime? timestamp,
     String? imagePath,
     String? imageUrl,
@@ -50,7 +60,9 @@ class MeterReadingEntity {
     return MeterReadingEntity(
       id: id ?? this.id,
       customerId: customerId ?? this.customerId,
-      reading: reading ?? this.reading,
+      meterValue: meterValue ?? this.meterValue,
+      consumption: consumption ?? this.consumption,
+      cost: cost ?? this.cost,
       timestamp: timestamp ?? this.timestamp,
       imagePath: imagePath ?? this.imagePath,
       imageUrl: imageUrl ?? this.imageUrl,

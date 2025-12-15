@@ -22,15 +22,8 @@ class ActionButton extends StatelessWidget {
       child: Container(
         height: 55,
         decoration: BoxDecoration(
-          color: Colors.grey[100],
+          color: Colors.grey[200],
           borderRadius: BorderRadius.circular(16),
-          // boxShadow: const [
-          //   BoxShadow(
-          //     color: Colors.black12,
-          //     blurRadius: 4,
-          //     offset: Offset(0, 2),
-          //   )
-          // ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,

@@ -1,3 +1,4 @@
+import '../../data/repositories/meter_reading_repository_impl.dart';
 import '../entities/meter_reading_entity.dart';
 import '../repositories/meter_reading_repository.dart';
 
@@ -6,7 +7,7 @@ class AddReadingUseCase {
 
   AddReadingUseCase(this.repo);
 
-  Future<void> call(MeterReadingEntity entity) async {
+  Future<ReadingCalculationResult> call(MeterReadingEntity entity) async {
     return await repo.addReading(entity);
   }
 }

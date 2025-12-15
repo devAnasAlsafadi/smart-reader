@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:smart_reader/core/extensions/localization_extension.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/utils/app_dimens.dart';
 import 'package:smart_reader/features/customers/presentation/widgets/reading_history_card.dart';
 
 import '../../../../core/utils/app_date_utils.dart';
+import '../../../../generated/locale_keys.g.dart';
 import '../../../payments/data/services/monthly_statement.dart';
 import 'payment_item.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
@@ -29,7 +31,7 @@ class MonthlyCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${AppDateUtils.monthName(month.month)} ${month.year}",
+                "${AppDateUtils.monthName(context,month.month)} ${month.year}",
                 style: AppTextStyles.heading2.copyWith(fontSize: 14),
               ),
               SizedBox(height: AppDimens.verticalSpaceSmall,)
@@ -40,12 +42,12 @@ class MonthlyCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Cost: ₪${month.monthlyReadingsCost.toStringAsFixed(2)}   "
-                    "Paid: ₪${month.monthlyPayments.toStringAsFixed(2)}",
+                "${LocaleKeys.cost.t}: ₪${month.monthlyReadingsCost.toStringAsFixed(2)}   "
+                    "${LocaleKeys.paid.t}: ₪${month.monthlyPayments.toStringAsFixed(2)}",
                 style: AppTextStyles.heading2.copyWith(fontSize: 12,color: AppColors.grey),
               ),
               SizedBox(height: AppDimens.verticalSpace,),
-              Text("Balance: ₪${month.monthlyBalance.toStringAsFixed(2)}",
+              Text("${LocaleKeys.balance.t} ₪${month.monthlyBalance.toStringAsFixed(2)}",
                   style: TextStyle(
                       color: month.monthlyBalance > 0 ? Colors.red : Colors.green)
               ),
@@ -59,7 +61,7 @@ class MonthlyCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 12),
-                  Text("⚡ Readings (${month.readings.length})",
+                  Text("⚡ ${LocaleKeys.readings.t} (${month.readings.length})",
                       style: AppTextStyles.subtitle),
                   Divider(color: AppColors.grey.withValues(alpha: .3),),
                   const SizedBox(height: 8),
@@ -67,7 +69,7 @@ class MonthlyCard extends StatelessWidget {
                   ...month.readings.map((r) => ReadingHistoryCard(reading: r, customerId: customerId,)),
 
                   const SizedBox(height: 12),
-                  Text("\$ Payments (${month.payments.length})",
+                  Text("💰 ${LocaleKeys.payments.t} (${month.payments.length})",
                       style: AppTextStyles.subtitle),
                   Divider(color: AppColors.grey.withValues(alpha: .3),),
                   const SizedBox(height: 8),

@@ -1,7 +1,17 @@
+// Flutter
 import 'package:flutter/material.dart';
-import '../../../../../core/theme/app_text_style.dart';
-import '../../../../../core/utils/app_dimens.dart';
-import '../../../auth/presentation/widgets/my_text_field.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+
+// Shared Widgets
+import 'package:smart_reader/features/auth/presentation/widgets/my_text_field.dart';
+
 
 class CustomerInputSection extends StatelessWidget {
   final TextEditingController nameCtrl;
@@ -20,36 +30,48 @@ class CustomerInputSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("Customer Information", style: AppTextStyles.subtitle),
+        Text(
+          LocaleKeys.customer_information.t,
+          style: AppTextStyles.subtitle,
+        ),
         const SizedBox(height: AppDimens.verticalSpace),
 
-        Text("Customer Name *", style: AppTextStyles.body),
+        Text(
+          "${LocaleKeys.customer_name.t} *",
+          style: AppTextStyles.body,
+        ),
         const SizedBox(height: 5),
         MyTextField(
           controller: nameCtrl,
-          hintText: "John Doe",
+          hintText: LocaleKeys.customer_name_hint.t,
           keyboardType: TextInputType.text,
           obscureText: false,
         ),
 
         const SizedBox(height: AppDimens.verticalSpace),
 
-        Text("Address (Area/City) *", style: AppTextStyles.body),
+        Text(
+          "${LocaleKeys.customer_address.t} *",
+          style: AppTextStyles.body,
+        ),
         const SizedBox(height: 5),
         MyTextField(
           controller: addressCtrl,
-          hintText: "New York, USA",
+          hintText: LocaleKeys.customer_address_hint.t,
           keyboardType: TextInputType.text,
           obscureText: false,
         ),
 
         const SizedBox(height: AppDimens.verticalSpace),
 
-        Text("Street *", style: AppTextStyles.body),
+        Text(
+          "${LocaleKeys.customer_street.t} *",
+          style: AppTextStyles.body,
+        ),
         const SizedBox(height: 5),
         MyTextField(
           controller: streetCtrl,
-          hintText: "Main Street",
+          hintText: LocaleKeys.customer_street_hint.t,
           keyboardType: TextInputType.text,
           obscureText: false,
         ),

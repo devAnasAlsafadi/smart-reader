@@ -2,19 +2,28 @@ import '../constants.dart';
 
 class ReadingUtils {
 
-  static double toKwh(String reading) {
-    final value = int.tryParse(reading) ?? 0;
-    return value / 1000;
+  static double calculateConsumption({
+    required double previousMeter,
+    required double currentMeter,
+  }) {
+    final diff = currentMeter - previousMeter;
+    return diff > 0 ? diff : 0.0;
   }
 
-
-  static double calculateCost(String reading) {
-    final kwh = toKwh(reading);
-    return kwh * PricingConfig.pricePerKwh;
+  static double calculateCost(double consumption) {
+    return consumption * PricingConfig.pricePerKwh;
   }
 
-  static String formatKwh(String reading) {
-    return "${toKwh(reading).toStringAsFixed(2)} kWh";
+  static String formatMeterValue(double meterValue) {
+    return meterValue.toStringAsFixed(2);
+  }
+
+  static String formatConsumption(double consumption) {
+    return "${consumption.toStringAsFixed(2)} kWh";
+  }
+
+  static String formatCost(double cost) {
+    return "₪${cost.toStringAsFixed(2)}";
   }
 
 

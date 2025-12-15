@@ -1,5 +1,12 @@
+// Flutter
 import 'package:flutter/material.dart';
-import '../../../../../core/enum/customer_filter_type.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/enum/customer_filter_type.dart';
 
 class HomeFilterChip extends StatelessWidget {
   final CustomerFilterType filter;
@@ -15,7 +22,9 @@ class HomeFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = filter == CustomerFilterType.name ? "Name" : "Street";
+    final label = filter == CustomerFilterType.name
+        ? LocaleKeys.filter_name.t
+        : LocaleKeys.filter_street.t;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 300),
@@ -29,15 +38,18 @@ class HomeFilterChip extends StatelessWidget {
 
         return FadeTransition(
           opacity: animation,
-          child: SlideTransition(position: offsetAnimation, child: child),
+          child: SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          ),
         );
       },
       child: visible
           ? Padding(
-        key: ValueKey("chip-$label"),
+        key: ValueKey('chip-$label'),
         padding: const EdgeInsets.only(top: 8),
         child: Align(
-          alignment: Alignment.centerLeft,
+          alignment: AlignmentDirectional.centerStart,
           child: Chip(
             label: Text(label),
             deleteIcon: const Icon(Icons.close),
@@ -46,8 +58,9 @@ class HomeFilterChip extends StatelessWidget {
         ),
       )
           : const SizedBox.shrink(
-        key: ValueKey("chip-empty"),
+        key: ValueKey('chip-empty'),
       ),
     );
   }
 }
+

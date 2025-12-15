@@ -1,13 +1,25 @@
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/core/utils/app_dialog.dart';
+
+// Features – Payments
+import 'package:smart_reader/features/payments/domain/entities/payment_entity.dart';
 import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
 import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_event.dart';
-import '../../../../core/utils/app_dialog.dart';
-import '../../../payments/domain/entities/payment_entity.dart';
-import '../../../payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
-import '../../../payments/presentaion/blocs/billing_bloc/billing_event.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
+import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_event.dart';
+
+import '../../../../core/utils/app_date_utils.dart';
+
 
 class PaymentItem extends StatelessWidget {
   final PaymentEntity payment;
@@ -53,11 +65,11 @@ class PaymentItem extends StatelessWidget {
           ),
           SizedBox(height: 5,),
           Text(
-            "${payment.timestamp.day}/${payment.timestamp.month}/${payment.timestamp.year}",
+            AppDateUtils.formatDate(context, payment.timestamp),
             style: AppTextStyles.body.copyWith(color: AppColors.grey),
           ),
           Text(
-            payment.note ?? "",
+            payment.note ,
             style: AppTextStyles.body.copyWith(color: AppColors.grey),
           ),
 
@@ -69,10 +81,10 @@ class PaymentItem extends StatelessWidget {
   Future<void> _onDeletePressed(BuildContext context) async {
     final confirmed = await AppDialog.showDeleteConfirm(
       context,
-      title: "Delete Payment",
-      message: "This action will permanently remove this payment.",
-      confirmText: "Delete",
-      cancelText: "Cancel",
+      title: LocaleKeys.delete_payment_title.t,
+      message: LocaleKeys.delete_payment_message.t,
+      confirmText: LocaleKeys.delete.t,
+      cancelText: LocaleKeys.cancel.t,
     );
 
     if (confirmed == true) {

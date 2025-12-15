@@ -1,12 +1,20 @@
+// Dart
 import 'dart:io';
-import 'package:camera/camera.dart';
+
+// Flutter
 import 'package:flutter/material.dart';
+
+// Third-party
+import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../../../../../core/native/native_image_processor.dart';
-import '../../../../../core/routes/navigation_manager.dart';
-import '../../../../../core/routes/route_name.dart';
-import '../../../../../core/utils/app_dimens.dart';
+// Core
+import 'package:smart_reader/core/native/native_image_processor.dart';
+import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/core/routes/route_name.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+
+// Local
 import 'camera_image_processor.dart';
 import 'camera_overlay_painter.dart';
 
@@ -38,10 +46,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
   Future<void> _initCamera() async {
     final cameras = await availableCameras();
-    final backCamera = cameras.firstWhere(
-          (c) => c.lensDirection == CameraLensDirection.back,
-      orElse: () => cameras.first,
-    );
+    final backCamera = _getBackCamera(cameras);
 
     _controller = CameraController(
       backCamera,
@@ -50,7 +55,13 @@ class _CameraScreenState extends State<CameraScreen> {
     );
 
     _initializeFuture = _controller!.initialize();
-    setState(() {});
+    if (mounted) setState(() {});
+  }
+  CameraDescription _getBackCamera(List<CameraDescription> cameras) {
+    return cameras.firstWhere(
+          (c) => c.lensDirection == CameraLensDirection.back,
+      orElse: () => cameras.first,
+    );
   }
 
   Future<void> _capture(Rect overlayRect, Size screenSize) async {
@@ -78,6 +89,8 @@ class _CameraScreenState extends State<CameraScreen> {
       final enhancedFile = File("${dir.path}/meter_enhanced_${DateTime
           .now()}.png");
       await enhancedFile.writeAsBytes(enhancedBytes);
+      print('enhancedFile : $enhancedFile');
+
 
       NavigationManger.navigateTo(
         context,
@@ -167,7 +180,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       behavior: HitTestBehavior.translucent,
                       onTap: () async {
                         try {
-                          print('clicked success');
+                          debugPrint('Capture clicked');
                           await _capture(overlayRect, Size(screenW, screenH));
                         } catch (e) {
                           debugPrint("CAPTURE ERROR: $e");

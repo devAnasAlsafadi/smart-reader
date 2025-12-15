@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
 
 import '../../../auth/presentation/widgets/my_text_field.dart';
 
@@ -23,7 +25,7 @@ class HomeSearchBar extends StatelessWidget {
         Expanded(
           child: MyTextField(
             controller: controller,
-            hintText: 'Search',
+            hintText: LocaleKeys.search.tr(),
             focusNode: focusNode,
             obscureText: false,
             keyboardType: TextInputType.text,

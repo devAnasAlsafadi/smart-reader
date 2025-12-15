@@ -1,74 +1,85 @@
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
 
-import '../../../../../core/utils/app_dimens.dart';
-import '../../../../../core/routes/navigation_manager.dart';
-import '../../../../../core/routes/route_name.dart';
-import '../../../../../core/theme/app_color.dart';
-import '../../../../../core/theme/app_text_style.dart';
-import '../../../../../core/utils/app_snackbar.dart';
-import '../../../domain/entities/meter_reading_entity.dart';
-import '../../blocs/meter_reading/meter_reading_event.dart';
-import '../../blocs/meter_reading/meter_reading_state.dart';
-import '../../widgets/action_button.dart';
+// Core
+import 'package:smart_reader/core/routes/navigation_manager.dart';
+import 'package:smart_reader/core/routes/route_name.dart';
+import 'package:smart_reader/core/theme/app_color.dart';
+import 'package:smart_reader/core/utils/app_dialog.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+import 'package:smart_reader/core/utils/app_snackbar.dart';
+
+// Localization
+import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/screens/result_screen/result_screen_controller.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/screens/result_screen/widgets/confidence_bar.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/screens/result_screen/widgets/reading_value_card.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/screens/result_screen/widgets/result_actions_row.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/screens/result_screen/widgets/result_header.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Features – Meter Reading
+import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_state.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/widgets/action_button.dart';
 
 class ResultScreen extends StatefulWidget {
-   const ResultScreen({
-    super.key,
-    required this.entity
-  });
+  const ResultScreen({super.key, required this.entity});
 
- final MeterReadingEntity entity;
+  final MeterReadingEntity entity;
 
   @override
   State<ResultScreen> createState() => _ResultScreenState();
 }
 
 class _ResultScreenState extends State<ResultScreen> {
+  late ResultScreenController _controller;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller = ResultScreenController(
+      context: context,
+      entity: widget.entity,
+      onReadingUpdated: () => setState(() {}),
+    );
+  }
+  Widget _confirmButton() {
+    return SizedBox(
+      width: double.infinity,
+      height: 55,
+      child: ElevatedButton(
+        onPressed: _controller.saveReading,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.accentGreen,
+        ),
+        child: Text(LocaleKeys.confirm_reading.t),
+      ),
+    );
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<MeterReadingBloc, MeterReadingState>(
-      listener: (context, state) {
-        if (state is ReadingSavedLoadingState) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => const Center(child: CircularProgressIndicator()),
-          );
-        }
-        if (state is ReadingSavedSuccessState) {
-          AppSnackBar.success(context, "Reading saved successfully!");
-          NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.home);
-        }
-        if (state is ReadingSavedFailureState) {
-          Navigator.pop(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        }
-      },
-
-
-
+      listener:  _controller.onBlocStateChanged,
       child: Scaffold(
         backgroundColor: AppColors.background,
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => NavigationManger.pop(context),
-          ),
-        ),
+        appBar: AppBar(),
         body: Padding(
           padding: const EdgeInsets.all(AppDimens.paddingLarge),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Reading Extracted', style: AppTextStyles.heading1),
-              Text('AI has detected the following value',
-                style: AppTextStyles.bodySecondary,),
 
-              SizedBox(height: 50),
+              const ResultHeader(),
+              Spacer(),
               Align(
                 alignment: Alignment.center,
                 child: CircleAvatar(
@@ -81,63 +92,17 @@ class _ResultScreenState extends State<ResultScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
-              Align(alignment: Alignment.center, child: _buildReadingCard()),
-              const SizedBox(height: 25),
-              _buildConfidenceBar(),
+              const SizedBox(height: 24),
+              ReadingValueCard(value: widget.entity.meterValue),
+              const SizedBox(height: 24),
+              const ConfidenceBar(),
               const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    context.read<MeterReadingBloc>().add(
-                      SaveReadingEvent(
-                          entity: widget.entity
-                      ),
-                    );
-
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.accentGreen,
-                  ),
-                  child: const Text("Confirm Reading"),
-                ),
-              ),
+              _confirmButton(),
               const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: ActionButton(
-                      icon: Icons.edit_outlined,
-                      label: "Edit",
-                      onTap: () async {
-                        final updated = await NavigationManger.navigateTo(
-                            context,
-                            RouteNames.editReadingScreen,
-                            arguments: widget.entity.reading
-                        );
-                        if (updated != null && updated is String) {
-                          setState(() {
-                            widget.entity.reading = updated;
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ActionButton(
-                      icon: Icons.refresh_outlined,
-                      label: "Try Again",
-                      onTap: () {
-                        NavigationManger.navigateAndReplace(context, RouteNames.camera);
-                      },
-                    ),
-                  ),
-                ],
+              ResultActionsRow(
+                onEdit: _controller.editReading,
+                onRetry: _controller.tryAgain,
               ),
-
               const SizedBox(height: 30),
             ],
           ),
@@ -145,75 +110,4 @@ class _ResultScreenState extends State<ResultScreen> {
       ),
     );
   }
-
-  Widget _buildReadingCard() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppDimens.paddingLarge),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
-        boxShadow: const [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          const Text("Meter Reading", style: AppTextStyles.subtitle),
-          const SizedBox(height: 10),
-          Text(widget.entity.reading,
-              style: AppTextStyles.heading1.copyWith(fontSize: 30)),
-          const SizedBox(height: 5),
-          const Text("kWh", style: AppTextStyles.caption),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildConfidenceBar() {
-    return Container(
-      padding: const EdgeInsets.all(AppDimens.paddingLarge),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6, offset: Offset(0, 2)),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.trending_up, color: AppColors.accentGreen),
-              const SizedBox(width: 8),
-              const Text("Confidence", style: AppTextStyles.subtitle),
-              const Spacer(),
-              Text(
-                "96%",
-                style: AppTextStyles.subtitle.copyWith(
-                  color: AppColors.accentGreen,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: 0.96,
-              minHeight: 8,
-              color: AppColors.accentGreen,
-              backgroundColor: AppColors.border,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-

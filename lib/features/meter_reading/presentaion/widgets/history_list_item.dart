@@ -41,14 +41,14 @@ class HistoryListItem extends StatelessWidget {
           const SizedBox(height: 10),
 
           Text(
-            "Reading: ${ReadingUtils.formatKwh(reading.reading)}",
+            "Reading: ${ReadingUtils.formatMeterValue(reading.meterValue)}",
             style: AppTextStyles.body,
           ),
 
           const SizedBox(height: 4),
 
           Text(
-            AppDateUtils.formatDateTime(reading.timestamp),
+            AppDateUtils.formatDateTime(context,reading.timestamp),
             style: AppTextStyles.caption,
           ),
         ],

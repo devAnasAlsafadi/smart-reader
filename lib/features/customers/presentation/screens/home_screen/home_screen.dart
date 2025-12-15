@@ -1,21 +1,35 @@
+// Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+// Localization
+import 'package:easy_localization/easy_localization.dart';
+import 'package:smart_reader/generated/locale_keys.g.dart';
+
+// Core
+import 'package:smart_reader/core/enum/customer_filter_type.dart';
 import 'package:smart_reader/core/routes/navigation_manager.dart';
 import 'package:smart_reader/core/routes/route_name.dart';
-import 'package:smart_reader/core/user_session.dart';
-import 'package:smart_reader/features/customers/presentation/blocs/customer_bloc/customer_state.dart';
-import '../../../../../core/enum/customer_filter_type.dart';
-import '../../../../../core/utils/app_dimens.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
-import '../../../../../core/utils/app_bottom_sheets.dart';
-import '../../blocs/customer_bloc/customer_bloc.dart';
-import '../../blocs/customer_bloc/customer_event.dart';
-import '../../widgets/customer_list_view.dart';
-import '../../widgets/home_filter_chip.dart';
-import '../../widgets/home_header.dart';
-import '../../widgets/home_search_bar.dart';
+import 'package:smart_reader/core/user_session.dart';
+import 'package:smart_reader/core/utils/app_bottom_sheets.dart';
+import 'package:smart_reader/core/utils/app_dimens.dart';
+
+// Features – Customers (Bloc)
+import 'package:smart_reader/features/customers/presentation/blocs/customer_bloc/customer_bloc.dart';
+import 'package:smart_reader/features/customers/presentation/blocs/customer_bloc/customer_event.dart';
+import 'package:smart_reader/features/customers/presentation/blocs/customer_bloc/customer_state.dart';
+
+// Features – Customers (UI)
+import 'package:smart_reader/features/customers/presentation/widgets/customer_list_view.dart';
+import 'package:smart_reader/features/customers/presentation/widgets/home_filter_chip.dart';
+import 'package:smart_reader/features/customers/presentation/widgets/home_header.dart';
+import 'package:smart_reader/features/customers/presentation/widgets/home_search_bar.dart';
+
+// Controller
 import 'home_screen_controller.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -59,7 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
-          "Add Customer",
+          LocaleKeys.add_customer.tr(),
           style: AppTextStyles.body.copyWith(color: Colors.white),
         ),
       ),

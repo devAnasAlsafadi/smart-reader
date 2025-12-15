@@ -10,17 +10,21 @@ part 'meter_reading_model.g.dart';
 class MeterReadingModel extends MeterReadingEntity {
   @HiveField(0) final String idHive;
   @HiveField(1) final String customerIdHive;
-  @HiveField(2) final String readingHive;
-  @HiveField(3) final DateTime timestampHive;
-  @HiveField(4) final String imagePathHive;
-  @HiveField(5) final String? imageUrlHive;
-  @HiveField(6) final bool syncedHive;
-  @HiveField(7) final bool isDeletedHive;
+  @HiveField(2) final double meterValueHive;
+  @HiveField(3) final double consumptionHive;
+  @HiveField(4) final double costHive;
+  @HiveField(5) final DateTime timestampHive;
+  @HiveField(6) final String imagePathHive;
+  @HiveField(7) final String? imageUrlHive;
+  @HiveField(8) final bool syncedHive;
+  @HiveField(9) final bool isDeletedHive;
 
   MeterReadingModel({
     required this.idHive,
     required this.customerIdHive,
-    required this.readingHive,
+    required this.meterValueHive,
+    required this.consumptionHive,
+    required this.costHive,
     required this.timestampHive,
     required this.imagePathHive,
     required this.syncedHive,
@@ -29,7 +33,9 @@ class MeterReadingModel extends MeterReadingEntity {
   }) : super(
     id: idHive,
     customerId: customerIdHive,
-    reading: readingHive,
+    meterValue: meterValueHive,
+    consumption: consumptionHive,
+    cost: costHive,
     timestamp: timestampHive,
     imagePath: imagePathHive,
     imageUrl: imageUrlHive,
@@ -37,22 +43,25 @@ class MeterReadingModel extends MeterReadingEntity {
     isDeleted: isDeletedHive,
   );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'customerId': customerId,
-      'reading': reading,
-      'timestamp': timestamp.toIso8601String(),
-      'imageUrl': imageUrl,
-      'synced': synced,
-    };
-  }
+
+  Map<String, dynamic> toJson() => {
+    'id': idHive,
+    'customerId': customerIdHive,
+    'meterValue': meterValueHive,
+    'consumption': consumptionHive,
+    'cost': costHive,
+    'timestamp': timestampHive.toIso8601String(),
+    'imageUrl': imageUrlHive,
+    'synced': syncedHive,
+  };
 
   factory MeterReadingModel.fromJson(Map<String, dynamic> json) {
     return MeterReadingModel(
       idHive: json['id'],
       customerIdHive: json['customerId'],
-      readingHive: json['reading'],
+      meterValueHive: json['meterValue'],
+      consumptionHive: json['consumption'],
+      costHive: json['cost'],
       timestampHive: DateTime.parse(json['timestamp']),
       imagePathHive: '',
       imageUrlHive: json['imageUrl'],
@@ -70,7 +79,9 @@ class MeterReadingModel extends MeterReadingEntity {
     return MeterReadingModel(
       idHive: idHive,
       customerIdHive: customerIdHive,
-      readingHive: readingHive,
+      meterValueHive: meterValueHive,
+      consumptionHive: consumptionHive,
+      costHive: costHive,
       timestampHive: timestampHive,
       imagePathHive: imagePathHive ?? this.imagePathHive,
       imageUrlHive: imageUrlHive ?? this.imageUrlHive,

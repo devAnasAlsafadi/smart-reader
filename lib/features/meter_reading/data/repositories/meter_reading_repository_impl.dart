@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../../../core/constants.dart';
 
 import '../../../../core/services/connectivity_service.dart';
 import '../../domain/entities/meter_reading_entity.dart';
@@ -17,35 +18,51 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
 
 
   @override
-  Future<void> addReading(MeterReadingEntity entity) async {
+  Future<ReadingCalculationResult> addReading(MeterReadingEntity entity) async {
+    final lastReading = await local.getLastReading(entity.customerId);
+    final previousValue = lastReading?.meterValue ?? entity.meterValue;
+    final consumption = entity.meterValue - previousValue;
+    final cost = consumption > 0
+        ? consumption * PricingConfig.pricePerKwh
+        : 0.0;
+
     final model = MeterReadingModel(
       idHive: entity.id,
       customerIdHive: entity.customerId,
+      meterValueHive: entity.meterValue,
+      consumptionHive: consumption,
+      costHive: cost,
       timestampHive: entity.timestamp,
-      readingHive: entity.reading,
       imagePathHive: entity.imagePath,
       imageUrlHive: '',
       syncedHive: false,
-      isDeletedHive: false
+      isDeletedHive: false,
     );
 
     await local.addReading(model);
 
+    final result = ReadingCalculationResult(
+      previousValue: previousValue,
+      newValue: entity.meterValue,
+      consumption: consumption,
+      cost: cost,
+    );
+
     final online = await ConnectivityService.isOnline();
-    if (!online) return;
+    if (!online) {
+      return result;
+    }
+
 
     try {
       final url = await UploadService().uploadImage(entity.imagePath);
-      print("Uploaded to: $url");
-
       final remoteModel = model.copyWith(
         imageUrlHive: url,
         imagePathHive: null,
+        syncedHive: true,
       );
       await remote.addReading(remoteModel);
-      await remote.updateReading(
-        remoteModel.copyWith(syncedHive: true),
-      );
+      await remote.updateReading(remoteModel);
       final updatedLocal = model.copyWith(
         imageUrlHive: url,
         syncedHive: true,
@@ -57,6 +74,7 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
       print("Add reading error: $e");
 
     }
+    return result;
   }
 
   @override
@@ -160,4 +178,17 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
       }
     }
   }
+}
+class ReadingCalculationResult {
+  final double previousValue;
+  final double newValue;
+  final double consumption;
+  final double cost;
+
+  ReadingCalculationResult({
+    required this.previousValue,
+    required this.newValue,
+    required this.consumption,
+    required this.cost,
+  });
 }
