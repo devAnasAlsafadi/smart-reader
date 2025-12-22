@@ -8,8 +8,8 @@ class AuthLoading extends AuthState {}
 
 
 class AuthAuthenticated extends AuthState {
-  final UserEntity user;
-  AuthAuthenticated(this.user);
+  final EmployeeEntity employee;
+  AuthAuthenticated(this.employee);
 }
 
 class AuthUnauthenticated extends AuthState {}

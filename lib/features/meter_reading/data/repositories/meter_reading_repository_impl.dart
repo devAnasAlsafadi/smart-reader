@@ -2,6 +2,8 @@ import 'dart:io';
 import '../../../../core/constants.dart';
 
 import '../../../../core/services/connectivity_service.dart';
+import '../../../app_settings/domain/usecases/get_billing_settings_usecase.dart';
+import '../../../auth/presentation/screens/splash_screen/app_billings_setting.dart';
 import '../../domain/entities/meter_reading_entity.dart';
 import '../../domain/repositories/meter_reading_repository.dart';
 import '../data_source/meter_reading_local_data_source.dart';
@@ -13,25 +15,33 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
   final MeterReadingLocalDataSource local;
   final MeterReadingRemoteDataSource remote;
   final UploadService uploader;
+  final GetBillingSettingsUseCase getSettings;
 
-  MeterReadingRepositoryImpl(this.local, this.remote, this.uploader);
+
+  MeterReadingRepositoryImpl(this.local, this.remote, this.uploader,    this.getSettings,);
 
 
   @override
   Future<ReadingCalculationResult> addReading(MeterReadingEntity entity) async {
-    final lastReading = await local.getLastReading(entity.customerId);
+    final lastReading = await local.getLastReading(entity.userId);
     final previousValue = lastReading?.meterValue ?? entity.meterValue;
     final consumption = entity.meterValue - previousValue;
+    final settings = AppBillingSettings.current;
     final cost = consumption > 0
-        ? consumption * PricingConfig.pricePerKwh
-        : 0.0;
+        ? consumption * settings.pricePerKwh
+        : settings.minMonthlyFee;
+
 
     final model = MeterReadingModel(
       idHive: entity.id,
-      customerIdHive: entity.customerId,
+      userIdHive: entity.userId,
       meterValueHive: entity.meterValue,
       consumptionHive: consumption,
       costHive: cost,
+      pricePerKwhUsedHive: settings.pricePerKwh,
+      minMonthlyFeeUsedHive: settings.minMonthlyFee,
+      calculationModeUsedHive: settings.calculationMode,
+      settingsVersionUsedHive: settings.version,
       timestampHive: entity.timestamp,
       imagePathHive: entity.imagePath,
       imageUrlHive: '',

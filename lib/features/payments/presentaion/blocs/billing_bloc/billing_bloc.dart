@@ -21,9 +21,9 @@ class BillingBloc extends Bloc<BillingEvent, BillingState> {
       emit(state.copyWith(isLoading: true));
 
       try {
-        final readings = await getReadings(event.customerId);
+        final readings = await getReadings(event.userId);
 
-        final payments = await getPayments(event.customerId);
+        final payments = await getPayments(event.userId);
 
         final result = await calculateBilling(
           readings: readings,

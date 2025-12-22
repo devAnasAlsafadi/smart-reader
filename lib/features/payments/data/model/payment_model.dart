@@ -5,7 +5,7 @@ part 'payment_model.g.dart';
 @HiveType(typeId: 4)
 class PaymentModel extends PaymentEntity {
   @HiveField(0) final String idHive;
-  @HiveField(1) final String customerIdHive;
+  @HiveField(1) final String userIdHive;
   @HiveField(2) final double amountHive;
   @HiveField(3) final String noteHive;
   @HiveField(4) final DateTime timestampHive;
@@ -14,7 +14,7 @@ class PaymentModel extends PaymentEntity {
 
   PaymentModel({
     required this.idHive,
-    required this.customerIdHive,
+    required this.userIdHive,
     required this.amountHive,
     required this.noteHive,
     required this.timestampHive,
@@ -22,7 +22,7 @@ class PaymentModel extends PaymentEntity {
     required this.isDeletedHive,
   }) : super(
     id: idHive,
-    customerId: customerIdHive,
+    userId: userIdHive,
     amount: amountHive,
     note: noteHive,
     timestamp: timestampHive,
@@ -35,7 +35,7 @@ class PaymentModel extends PaymentEntity {
   Map<String,dynamic> toJson(){
     return {
       "id": idHive,
-      "customerId": customerIdHive,
+      "userId": userIdHive,
       "amount": amountHive,
       "note": noteHive,
       "timestamp": timestampHive.toIso8601String(),
@@ -47,7 +47,7 @@ class PaymentModel extends PaymentEntity {
   factory PaymentModel.fromJson(Map<String,dynamic> json){
     return PaymentModel(
       idHive: json["id"],
-      customerIdHive: json["customerId"],
+      userIdHive: json["userId"],
       amountHive: json["amount"].toDouble(),
       noteHive: json["note"],
       timestampHive: DateTime.parse(json["timestamp"]),
@@ -64,7 +64,7 @@ class PaymentModel extends PaymentEntity {
   }) {
     return PaymentModel(
       idHive: idHive,
-      customerIdHive: customerIdHive,
+      userIdHive: userIdHive,
       amountHive: amount ?? amountHive,
       noteHive: note ?? noteHive,
       timestampHive: timestampHive,

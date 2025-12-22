@@ -38,12 +38,12 @@ class SaveReadingEvent extends MeterReadingEvent {
 }
 
 class LoadReadingsEvent extends MeterReadingEvent {
-  final String customerId;
+  final String userId;
 
-  LoadReadingsEvent(this.customerId);
+  LoadReadingsEvent(this.userId);
 
   @override
-  List<Object?> get props => [customerId];
+  List<Object?> get props => [userId];
 }
 
 class DeleteReadingEvent extends MeterReadingEvent {
@@ -56,9 +56,9 @@ class DeleteReadingEvent extends MeterReadingEvent {
 }
 
 class SyncOfflineReadingsEvent extends MeterReadingEvent {
-  final String customerId;
-  SyncOfflineReadingsEvent(this.customerId);
+  final String userId;
+  SyncOfflineReadingsEvent(this.userId);
 
   @override
-  List<Object?> get props => [customerId];
+  List<Object?> get props => [userId];
 }

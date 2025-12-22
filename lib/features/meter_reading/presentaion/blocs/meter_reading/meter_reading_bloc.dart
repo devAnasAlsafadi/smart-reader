@@ -50,7 +50,11 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
 
         final entity = MeterReadingEntity(
           id:event.entity.id,
-          customerId: event.entity.customerId,
+          calculationModeUsed: event.entity.calculationModeUsed,
+          minMonthlyFeeUsed: event.entity.minMonthlyFeeUsed,
+          pricePerKwhUsed: event.entity.pricePerKwhUsed,
+          settingsVersionUsed: event.entity.settingsVersionUsed,
+          userId: event.entity.userId,
           meterValue: event.entity.meterValue,
           consumption: event.entity.consumption,
           cost: event.entity.cost,
@@ -61,10 +65,6 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
         );
 
         final result = await addReading(entity);
-        print('cost is  : ${result.cost}');
-        print('consumption is  : ${result.consumption}');
-        print('previousValue is  : ${result.previousValue}');
-        print('newValue is  : ${result.newValue}');
 
         emit(ReadingSavedSuccessState(result));
 
@@ -76,7 +76,7 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
 
     on<LoadReadingsEvent>((event, emit) async {
       emit(ReadingsLoadingState());
-      final list = await getReadings(event.customerId);
+      final list = await getReadings(event.userId);
       emit(ReadingsLoadedState(list));
     });
 
@@ -87,7 +87,7 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
     });
 
     on<SyncOfflineReadingsEvent>((event, emit) async {
-      await syncOffline(event.customerId);
+      await syncOffline(event.userId);
     });
 
   }

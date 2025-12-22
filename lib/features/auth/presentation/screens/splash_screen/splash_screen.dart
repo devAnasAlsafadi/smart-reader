@@ -4,6 +4,8 @@ import 'package:flutter_svg/svg.dart';
 
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
+import 'package:smart_reader/features/app_settings/domain/usecases/get_billing_settings_usecase.dart';
+import 'package:smart_reader/features/app_settings/domain/usecases/sync_billing_settings_usecase.dart';
 import 'package:smart_reader/features/auth/presentation/screens/splash_screen/splash_screen_controller.dart';
 
 import '../../../../../core/utils/app_assets.dart';
@@ -12,7 +14,15 @@ import '../../../../../generated/locale_keys.g.dart';
 import '../../../../meter_reading/presentaion/widgets/loading_dots_widget.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+
+  final GetBillingSettingsUseCase getBillingSettings;
+  final SyncBillingSettingsUseCase syncBillingSettings;
+
+  const SplashScreen({
+    super.key,
+    required this.getBillingSettings,
+    required this.syncBillingSettings,
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -24,8 +34,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    if (!context.mounted) return;
-    _controller = SplashScreenController();
+    _controller = SplashScreenController(
+      getBillingSettings: widget.getBillingSettings,
+      syncBillingSettings: widget.syncBillingSettings,
+    );
     _controller.startApp(context);
   }
 

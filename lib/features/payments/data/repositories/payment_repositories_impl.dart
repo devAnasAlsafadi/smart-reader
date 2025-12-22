@@ -17,18 +17,16 @@ class PaymentRepositoryImpl implements PaymentRepository {
   Future<void> addPayment(PaymentEntity entity) async {
     final model = PaymentModel(
         idHive: entity.id,
-        customerIdHive: entity.customerId,
+        userIdHive: entity.userId,
         timestampHive: entity.timestamp,
         amountHive: entity.amount,
         noteHive: entity.note,
         syncedHive: entity.synced,
         isDeletedHive: entity.isDeleted
     );
-    print('local adding');
 
     try {
       await local.addPayment(model);
-      print('local added');
     } catch (e) {
       print("LOCAL ADD ERROR: $e");
     }

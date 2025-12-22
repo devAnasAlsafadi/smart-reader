@@ -3,16 +3,18 @@
   "splash_title": "MeterScan",
   "splash_subtitle": "Powered by AI-driven vision technology to read your electricity meter instantly and accurately.",
   "login_title": "Sign in to MeterScan",
-  "login_subtitle": "Manage customer meter readings with AI",
+  "login_subtitle": "Manage user meter readings with AI",
   "email": "Email",
   "password": "Password",
   "login": "Login",
   "email_hint": "you@example.com",
   "password_hint": "Enter your password",
-  "add_customer": "Add Customer",
+
+  "add_user": "Add User",
   "home_welcome": "Welcome back,",
   "search": "Search",
-  "no_customers_found": "No customers found",
+  "no_users_found": "No users found",
+
   "reading_deleted_success": "Reading deleted successfully",
   "payment_deleted_success": "Payment deleted successfully",
   "generic_error": "Error:",
@@ -23,29 +25,32 @@
   "billing_wallet": "Billing Wallet",
   "total_cost": "Total Cost",
   "total_paid": "Total Paid",
-  "customer_owes": "Customer owes",
+  "user_owes": "User owes",
   "cost": "Cost",
   "paid": "Paid",
   "balance": "Balance",
   "readings": "Readings",
   "payments": "Payments",
+
   "delete_reading_title": "Delete Reading",
   "delete_reading_message": "This action will permanently remove this reading.",
   "delete": "Delete",
   "cancel": "Cancel",
   "delete_payment_title": "Delete Payment",
   "delete_payment_message": "This action will permanently remove this payment.",
-  "add_customer_title": "Add Customer",
-  "add_customer_subtitle": "Enter customer details",
-  "customer_added_success": "Customer added successfully",
-  "save_customer": "Save Customer",
-  "customer_information": "Customer Information",
-  "customer_name": "Customer Name",
-  "customer_address": "Address (Area/City)",
-  "customer_street": "Street",
-  "customer_name_hint": "John Doe",
-  "customer_address_hint": "New York, USA",
-  "customer_street_hint": "Main Street",
+
+  "add_user_title": "Add User",
+  "add_user_subtitle": "Enter user details",
+  "user_added_success": "User added successfully",
+  "save_user": "Save User",
+  "user_information": "User Information",
+  "user_name": "User Name",
+  "user_address": "Address (Area/City)",
+  "user_street": "Street",
+  "user_name_hint": "John Doe",
+  "user_address_hint": "New York, USA",
+  "user_street_hint": "Main Street",
+
   "location_mode": "Location Mode",
   "use_gps": "Use GPS",
   "recommended": "Recommended",
@@ -62,6 +67,7 @@
   "location_failed": "Failed to get location",
   "fill_required_fields": "Please fill required fields",
   "get_location_first": "Please get location first",
+
   "payment_amount": "Payment Amount",
   "payment_amount_hint": "0.00",
   "payment_note": "Note (Optional)",
@@ -69,8 +75,10 @@
   "payment_info": "Payment will be recorded with today's date & time.",
   "invalid_amount": "Invalid amount",
   "payment_added_success": "Payment added",
+
   "filter_name": "Name",
   "filter_street": "Street",
+
   "preview_photo": "Preview photo",
   "review_captured_image": "Review your captured image",
   "extract_reading": "Extract Reading",
@@ -91,6 +99,7 @@
   "meter_reading_kwh": "Meter Reading (kWh)",
   "reading_tip": "Tip: Only enter numeric digits from your meter display",
   "edit_reading": "Edit Reading",
+
   "how_it_works": "How It Works",
   "simple_3_steps": "Simple 3-step process",
 
@@ -109,10 +118,11 @@
   "feature_history": "Complete reading history with timestamps.",
 
   "pro_tip": "Pro tip: Ensure good lighting and keep your phone steady for the best results.",
-  "get_started": " Get  Started",
+  "get_started": "Get Started",
   "step1": "Step 1",
   "step2": "Step 2",
   "step3": "Step 3",
+
   "settings": "Settings",
   "settings_subtitle": "Manage your account and preferences",
   "account": "Account",
@@ -122,10 +132,12 @@
   "learn_ocr": "Learn about OCR scanning",
   "all_readings": "All Readings",
   "reading_history": "View complete reading history",
+
   "dark_mode": "Dark Mode",
   "enabled": "Enabled",
   "disabled": "Disabled",
   "clear_all_data": "Clear All Data",
+
   "about_app": "About MeterScan",
   "logout": "Logout",
   "logout_confirm": "Are you sure you want to log out from your account?",
@@ -133,15 +145,32 @@
   "local_device_only": "Local device only",
   "about_app_description": "AI-powered electricity meter reader using on-device OCR technology. Your data stays private and secure on your device.",
   "version": "Version",
+
   "language": "Language",
   "select_language": "Select Language",
   "language_change_immediately": "Changes apply immediately",
-
   "english": "English",
   "arabic": "Arabic",
+
   "enter_coordinates": "Enter coordinates",
   "select_filter": "Select filter",
   "search_by_name": "Search by name",
-  "search_by_street": "Search by street"
+  "search_by_street": "Search by street",
+
+  "reading_added_successfully": "Reading Added Successfully",
+  "previous_reading": "Previous Reading",
+  "new_reading": "New Reading",
+  "consumption": "Consumption",
+  "cost_added": "Cost Added",
+  "balance_added_message": "This amount has been added to the user balance.",
+  "got_it": "Got it",
+  "ok": "OK",
+  "select_electrical_panel": "Select Electrical Panel",
+  "phone_number_hint": "05xxxxxxxx",
+  "phone_number": "Phone Number",
+  "id_number": "ID Number",
+  "id_number_hint": "Enter National Id Number",
+  "electrical_panel": "Electrical Panel "
+
 
 }

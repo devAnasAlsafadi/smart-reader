@@ -27,12 +27,12 @@ import '../../blocs/meter_reading/meter_reading_state.dart';
 
 class PreviewScreen extends StatefulWidget {
   final File imageFile;
-  final String customerId;
+  final String userId;
 
   const PreviewScreen({
     super.key,
     required this.imageFile,
-    required this.customerId,
+    required this.userId,
   });
 
   @override
@@ -168,10 +168,14 @@ class _PreviewScreenState extends State<PreviewScreen> {
   MeterReadingEntity get entity {
     return MeterReadingEntity(
       id: const Uuid().v4(),
-      customerId: widget.customerId,
+      userId: widget.userId,
       meterValue: 0.0,
       cost: 0.0,
       consumption: 0.0,
+      calculationModeUsed: "",
+      minMonthlyFeeUsed: 0.0,
+      pricePerKwhUsed: 0.0,
+      settingsVersionUsed: 0,
       imagePath: widget.imageFile.path,
       timestamp: DateTime.now(),
       synced: false,

@@ -27,7 +27,7 @@ class PaymentLocalDataSourceImpl implements PaymentLocalDataSource{
 
   @override
   Future<List<PaymentModel>> getPayment(String customerId) async {
-    return box.values.where((element) => element.customerId == customerId,).toList();
+    return box.values.where((element) => element.userId == customerId,).toList();
   }
 
 

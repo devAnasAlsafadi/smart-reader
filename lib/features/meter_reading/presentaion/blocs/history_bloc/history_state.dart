@@ -1,14 +1,14 @@
 import 'package:equatable/equatable.dart';
-import '../../../../customers/domain/entities/customer_entity.dart';
+import 'package:smart_reader/features/users/domain/entities/user_entity.dart';
 import '../../../../meter_reading/domain/entities/meter_reading_entity.dart';
 
 class ReadingHistoryItem {
   final MeterReadingEntity reading;
-  final CustomerEntity customer;
+  final UserEntity user;
 
   ReadingHistoryItem({
     required this.reading,
-    required this.customer,
+    required this.user,
   });
 }
 

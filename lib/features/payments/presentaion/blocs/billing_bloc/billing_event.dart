@@ -7,12 +7,12 @@ class BillingEvent extends Equatable {
 
 
 class LoadBillingEvent extends BillingEvent {
-  final String customerId;
+  final String userId;
 
-  LoadBillingEvent(this.customerId);
+  LoadBillingEvent(this.userId);
 
   @override
-  List<Object?> get props => [customerId];
+  List<Object?> get props => [userId];
 }
 
 

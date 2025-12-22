@@ -29,7 +29,7 @@ class MeterReadingLocalDataSourceImpl implements MeterReadingLocalDataSource{
 
   @override
   Future<List<MeterReadingModel>> getCustomerReading(String customerId)async {
-    return  box.values.where((element) => element.customerId == customerId,).toList();
+    return  box.values.where((element) => element.userId == customerId,).toList();
   }
 
   @override
@@ -49,7 +49,7 @@ class MeterReadingLocalDataSourceImpl implements MeterReadingLocalDataSource{
   @override
   Future<MeterReadingModel?> getLastReading(String customerId) async {
     final readings = box.values
-        .where((e) => e.customerId == customerId && !e.isDeleted)
+        .where((e) => e.userId == customerId && !e.isDeleted)
         .toList();
 
     if (readings.isEmpty) return null;

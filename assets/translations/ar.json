@@ -3,16 +3,18 @@
   "splash_title": "العداد الذكي",
   "splash_subtitle": "مدعوم بتقنية الذكاء الاصطناعي لقراءة عدادات الكهرباء بسرعة ودقة.",
   "login_title": "تسجيل الدخول إلى MeterScan",
-  "login_subtitle": "إدارة قراءات العدادات باستخدام الذكاء الاصطناعي",
+  "login_subtitle": "إدارة قراءات المستخدمين باستخدام الذكاء الاصطناعي",
   "email": "البريد الإلكتروني",
   "password": "كلمة المرور",
   "login": "تسجيل الدخول",
   "email_hint": "example@email.com",
   "password_hint": "أدخل كلمة المرور",
-  "add_customer": "إضافة مشترك",
-  "no_customers_found": "لا يوجد مشتركين",
+
+  "add_user": "إضافة مستخدم",
+  "no_users_found": "لا يوجد مستخدمون",
   "search": "بحث",
   "home_welcome": "أهلاً بعودتك،",
+
   "reading_deleted_success": "تم حذف القراءة بنجاح",
   "payment_deleted_success": "تم حذف الدفعة بنجاح",
   "generic_error": "خطأ:",
@@ -23,29 +25,32 @@
   "billing_wallet": "محفظة الفواتير",
   "total_cost": "إجمالي التكلفة",
   "total_paid": "إجمالي المدفوع",
-  "customer_owes": "المبلغ المستحق على المشترك",
+  "user_owes": "المبلغ المستحق على المستخدم",
   "cost": "التكلفة",
   "paid": "المدفوع",
   "balance": "الرصيد",
   "readings": "القراءات",
   "payments": "الدفعات",
+
   "delete_reading_title": "حذف القراءة",
   "delete_reading_message": "سيتم حذف هذه القراءة نهائياً، هل أنت متأكد؟",
   "delete": "حذف",
   "cancel": "إلغاء",
   "delete_payment_title": "حذف الدفعة",
   "delete_payment_message": "سيتم حذف هذه الدفعة نهائياً، هل أنت متأكد؟",
-  "add_customer_title": "إضافة مشترك",
-  "add_customer_subtitle": "أدخل بيانات المشترك",
-  "customer_added_success": "تمت إضافة المشترك بنجاح",
-  "save_customer": "حفظ المشترك",
-  "customer_information": "معلومات المشترك",
-  "customer_name": "اسم المشترك",
-  "customer_address": "العنوان (المنطقة / المدينة)",
-  "customer_street": "الشارع",
-  "customer_name_hint": "محمد أحمد",
-  "customer_address_hint": "رام الله، فلسطين",
-  "customer_street_hint": "شارع الرنتيسي",
+
+  "add_user_title": "إضافة مستخدم",
+  "add_user_subtitle": "أدخل بيانات المستخدم",
+  "user_added_success": "تمت إضافة المستخدم بنجاح",
+  "save_user": "حفظ المستخدم",
+  "user_information": "معلومات المستخدم",
+  "user_name": "اسم المستخدم",
+  "user_address": "العنوان (المنطقة / المدينة)",
+  "user_street": "الشارع",
+  "user_name_hint": "محمد أحمد",
+  "user_address_hint": "رام الله، فلسطين",
+  "user_street_hint": "شارع الرنتيسي",
+
   "location_mode": "وضع الموقع",
   "use_gps": "استخدام GPS",
   "recommended": "موصى به",
@@ -62,6 +67,7 @@
   "location_failed": "فشل في الحصول على الموقع",
   "fill_required_fields": "يرجى تعبئة الحقول المطلوبة",
   "get_location_first": "يرجى تحديد الموقع أولاً",
+
   "payment_amount": "قيمة الدفعة",
   "payment_amount_hint": "0.00",
   "payment_note": "ملاحظة (اختياري)",
@@ -69,8 +75,10 @@
   "payment_info": "سيتم تسجيل الدفعة بتاريخ ووقت اليوم.",
   "invalid_amount": "قيمة غير صحيحة",
   "payment_added_success": "تمت إضافة الدفعة بنجاح",
+
   "filter_name": "الاسم",
   "filter_street": "الشارع",
+
   "preview_photo": "معاينة الصورة",
   "review_captured_image": "راجع الصورة الملتقطة",
   "extract_reading": "استخراج القراءة",
@@ -91,6 +99,7 @@
   "meter_reading_kwh": "قراءة العداد (ك.و.س)",
   "reading_tip": "ملاحظة: أدخل الأرقام الظاهرة على شاشة العداد فقط",
   "edit_reading": "تعديل القراءة",
+
   "how_it_works": "كيف يعمل التطبيق",
   "simple_3_steps": "عملية بسيطة من 3 خطوات",
 
@@ -113,6 +122,7 @@
   "step1": "الخطوة 1",
   "step2": "الخطوة 2",
   "step3": "الخطوة 3",
+
   "settings": "الإعدادات",
   "settings_subtitle": "إدارة الحساب والتفضيلات",
   "account": "الحساب",
@@ -122,10 +132,12 @@
   "learn_ocr": "تعرّف على المسح بالذكاء الاصطناعي",
   "all_readings": "كل القراءات",
   "reading_history": "عرض سجل القراءات الكامل",
+
   "dark_mode": "الوضع الداكن",
   "enabled": "مفعّل",
   "disabled": "غير مفعّل",
   "clear_all_data": "حذف جميع البيانات",
+
   "about_app": "حول MeterScan",
   "logout": "تسجيل الخروج",
   "logout_confirm": "هل أنت متأكد من تسجيل الخروج؟",
@@ -133,15 +145,32 @@
   "local_device_only": "على الجهاز فقط",
   "about_app_description": "تطبيق ذكي لقراءة عدادات الكهرباء باستخدام تقنية OCR على الجهاز. تبقى بياناتك خاصة وآمنة على هاتفك.",
   "version": "الإصدار",
+
   "language": "اللغة",
   "select_language": "اختر اللغة",
   "language_change_immediately": "سيتم تطبيق التغييرات فورًا",
 
   "english": "الإنجليزية",
   "arabic": "العربية",
+
   "enter_coordinates": "أدخل الإحداثيات",
   "select_filter": "اختر طريقة التصفية",
   "search_by_name": "البحث بالاسم",
-  "search_by_street": "البحث بالشارع"
+  "search_by_street": "البحث بالشارع",
+  "reading_added_successfully": "تمت إضافة القراءة بنجاح",
+  "previous_reading": "القراءة السابقة",
+  "new_reading": "القراءة الجديدة",
+  "consumption": "الاستهلاك",
+  "cost_added": "التكلفة المضافة",
+  "balance_added_message": "تمت إضافة هذا المبلغ إلى رصيد المستخدم.",
+  "got_it": "تم",
+  "ok": "حسناً",
+  "select_electrical_panel": "اختر الطبلون الكهربائي",
+  "phone_number_hint": "05xxxxxxxx",
+  "phone_number": "رقم الجوال",
+  "id_number": "رقم الهوية",
+  "id_number_hint": "أدخل رقم هويتك",
+  "electrical_panel": "طابلون الكهرباء"
+
 
 }

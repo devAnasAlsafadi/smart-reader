@@ -10,10 +10,10 @@ abstract class PaymentEvent extends Equatable {
 }
 
 class LoadPaymentsEvent extends PaymentEvent {
-  final String customerId;
-  const LoadPaymentsEvent(this.customerId);
+  final String userId;
+  const LoadPaymentsEvent(this.userId);
   @override
-  List<Object?> get props => [customerId];
+  List<Object?> get props => [userId];
 }
 
 class AddPaymentEvent extends PaymentEvent {
@@ -31,8 +31,8 @@ class DeletePaymentEvent extends PaymentEvent {
 }
 
 class SyncPaymentsEvent extends PaymentEvent {
-  final String customerId;
-  const SyncPaymentsEvent(this.customerId);
+  final String userId;
+  const SyncPaymentsEvent(this.userId);
   @override
-  List<Object?> get props => [customerId];
+  List<Object?> get props => [userId];
 }

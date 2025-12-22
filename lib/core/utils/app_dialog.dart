@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:smart_reader/core/extensions/localization_extension.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
 
 import '../../features/meter_reading/data/repositories/meter_reading_repository_impl.dart';
+import '../../generated/locale_keys.g.dart';
 
 
 class AppDialog {
@@ -35,8 +37,8 @@ class AppDialog {
       BuildContext context, {
         required String title,
         required String message,
-        String confirmText = "Confirm",
-        String cancelText = "Cancel",
+        String? confirmText,
+        String? cancelText,
         Color confirmColor = AppColors.accentRed,
       }) {
     return showDialog<bool>(
@@ -53,14 +55,16 @@ class AppDialog {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(cancelText),
+            child: Text(  cancelText ?? LocaleKeys.cancel.t,
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: confirmColor,
             ),
             onPressed: () => Navigator.pop(context, true),
-            child: Text(confirmText),
+            child: Text(  confirmText ?? LocaleKeys.step_confirm.t,
+            ),
           ),
         ],
       ),
@@ -72,8 +76,8 @@ class AppDialog {
       BuildContext context, {
         required String title,
         required String message,
-        String confirmText = "Delete",
-        String cancelText = "Cancel",
+        String? confirmText,
+        String? cancelText,
       }) {
     return showDialog<bool>(
       context: context,
@@ -134,7 +138,8 @@ class AppDialog {
                     ),
                   ),
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text(confirmText),
+                  child: Text(  confirmText ?? LocaleKeys.step_confirm.t,
+                  ),
                 ),
               ),
 
@@ -153,7 +158,7 @@ class AppDialog {
                   ),
                   onPressed: () => Navigator.pop(context, false),
                   child: Text(
-                    cancelText,
+                    cancelText ?? LocaleKeys.cancel.t,
                     style: AppTextStyles.subtitle,
                   ),
                 ),
@@ -203,7 +208,7 @@ class AppDialog {
 
               // ✅ Title
               Text(
-                "Reading Added Successfully",
+                LocaleKeys.reading_added_successfully.t,
                 style: AppTextStyles.heading3,
                 textAlign: TextAlign.center,
               ),
@@ -211,15 +216,16 @@ class AppDialog {
               const SizedBox(height: 20),
 
               // Previous / New
-              _valueRow("Previous Reading", result.previousValue),
+              _valueRow(  LocaleKeys.previous_reading.t,
+                  result.previousValue),
               _divider(),
-              _valueRow("New Reading", result.newValue),
+              _valueRow(LocaleKeys.new_reading.t, result.newValue),
 
               const SizedBox(height: 14),
 
               // Consumption
               _highlightBox(
-                label: "Consumption",
+                label: LocaleKeys.consumption.t,
                 value:
                 "${result.consumption.toStringAsFixed(2)} kWh",
                 color: AppColors.primary,
@@ -229,7 +235,7 @@ class AppDialog {
 
               // Cost
               _highlightBox(
-                label: "Cost Added",
+                label: LocaleKeys.cost_added.t,
                 value:
                 "₪ ${result.cost.toStringAsFixed(2)}",
                 color: AppColors.accentGreen,
@@ -239,7 +245,7 @@ class AppDialog {
               const SizedBox(height: 12),
 
               Text(
-                "This amount has been added to the customer balance.",
+                LocaleKeys.balance_added_message.t,
                 style: AppTextStyles.caption,
                 textAlign: TextAlign.center,
               ),
@@ -258,7 +264,7 @@ class AppDialog {
                     ),
                   ),
                   onPressed: () => Navigator.pop(context),
-                  child: const Text("Got it"),
+                  child: Text(LocaleKeys.got_it.t),
                 ),
               ),
             ],

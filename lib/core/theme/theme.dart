@@ -12,7 +12,21 @@ class AppTheme {
     return base.copyWith(
       scaffoldBackgroundColor: AppColors.background,
       primaryColor: AppColors.primary,
-
+      dropdownMenuTheme: DropdownMenuThemeData(
+        menuStyle: MenuStyle(
+          padding: WidgetStateProperty.all(
+            const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+          ),
+          shape: WidgetStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+        ),
+      ),
       colorScheme: base.colorScheme.copyWith(
         primary: AppColors.primary,
         secondary: AppColors.primaryLight,
@@ -94,6 +108,7 @@ class AppTheme {
           borderSide: const BorderSide(color: AppColors.primary),
         ),
       ),
+
     );
   }
 }

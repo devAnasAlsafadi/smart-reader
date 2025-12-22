@@ -24,7 +24,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       emit(state.copyWith(isLoading: true));
 
       try {
-        final list = await getPaymentsUseCase(event.customerId);
+        final list = await getPaymentsUseCase(event.userId);
         emit(state.copyWith(isLoading: false, payments: list));
       } catch (e) {
         emit(state.copyWith(isLoading: false, loadError: e.toString()));
@@ -56,7 +56,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<SyncPaymentsEvent>((event, emit) async {
       emit(state.copyWith(isSyncing: true));
       try {
-        await syncOfflinePaymentsUseCase(event.customerId);
+        await syncOfflinePaymentsUseCase(event.userId);
         emit(state.copyWith(isSyncing: false));
       } catch (e) {
         emit(state.copyWith(isSyncing: false, syncError: e.toString()));

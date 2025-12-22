@@ -32,7 +32,7 @@ class ResultScreenController {
     NavigationManger.navigateAndReplace(
       context,
       RouteNames.camera,
-      arguments: entity.customerId,
+      arguments: entity.userId,
     );
   }
 

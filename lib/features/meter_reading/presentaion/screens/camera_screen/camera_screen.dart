@@ -20,8 +20,8 @@ import 'camera_overlay_painter.dart';
 
 class CameraScreen extends StatefulWidget {
 
-  final String customerId;
-  const CameraScreen({super.key, required this.customerId});
+  final String userId;
+  const CameraScreen({super.key, required this.userId});
 
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -97,7 +97,7 @@ class _CameraScreenState extends State<CameraScreen> {
         RouteNames.preview,
         arguments: {
           'imageFile' : enhancedFile,
-          'customerId' : widget.customerId
+          'userId' : widget.userId
         },
       );
     } catch (e) {

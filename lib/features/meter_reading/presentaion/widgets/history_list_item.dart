@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import '../../../../../core/utils/reading_utils.dart';
 import '../../../../../core/utils/app_date_utils.dart';
 import '../../../../../core/theme/app_text_style.dart';
-import '../../../customers/domain/entities/customer_entity.dart';
+import '../../../users/domain/entities/user_entity.dart';
 import '../../domain/entities/meter_reading_entity.dart';
 
 class HistoryListItem extends StatelessWidget {
-  final CustomerEntity customer;
+  final UserEntity user;
   final MeterReadingEntity reading;
 
   const HistoryListItem({
     super.key,
-    required this.customer,
+    required this.user,
     required this.reading,
   });
 
@@ -31,13 +31,13 @@ class HistoryListItem extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(customer.name, style: AppTextStyles.heading3),
+              Text(user.name, style: AppTextStyles.heading3),
             ],
           ),
 
           const SizedBox(height: 6),
 
-          Text(customer.street, style: AppTextStyles.caption),
+          Text(user.street, style: AppTextStyles.caption),
           const SizedBox(height: 10),
 
           Text(

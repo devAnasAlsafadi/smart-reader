@@ -10,8 +10,8 @@ class RouteNames {
   static const guide = '/guide';
   static const extractReadingScreen = '/extractReadingScreen';
   static const editReadingScreen = '/editReadingScreen';
-  static const addCustomerScreen = '/addCustomerScreen';
-  static const customerDetails = '/customerDetails';
+  static const addUserScreen = '/addUserScreen';
+  static const userDetails = '/userDetails';
 
 
 }

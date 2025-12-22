@@ -2,9 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:smart_reader/core/routes/route_name.dart';
 import 'package:smart_reader/features/auth/presentation/screens/login_screen/login_screen.dart';
-import 'package:smart_reader/features/customers/domain/entities/customer_entity.dart';
-import 'package:smart_reader/features/customers/presentation/screens/add_customer_screen/add_customer_screen.dart';
-import 'package:smart_reader/features/customers/presentation/screens/customer_details_screen/customer_details_screen.dart';
 import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/screens/camera_screen/camera_screen.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/screens/extract_reading_screen/extract_reading_screen.dart';
@@ -14,36 +11,49 @@ import 'package:smart_reader/features/meter_reading/presentaion/screens/preview_
 import 'package:smart_reader/features/meter_reading/presentaion/screens/result_screen/result_screen.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/screens/settings_screen/settings_screen.dart';
 
+import '../../features/app_settings/domain/usecases/get_billing_settings_usecase.dart';
+import '../../features/app_settings/domain/usecases/sync_billing_settings_usecase.dart';
 import '../../features/auth/presentation/screens/splash_screen/splash_screen.dart';
-import '../../features/customers/presentation/screens/home_screen/home_screen.dart';
 import '../../features/meter_reading/presentaion/screens/edit_reading_screen/edit_reading_screen.dart';
+import '../../features/users/domain/entities/user_entity.dart';
+import '../../features/users/presentation/screens/add_user_screen/add_user_screen.dart';
+import '../../features/users/presentation/screens/user_details_screen/user_details_screen.dart';
+import '../../features/users/presentation/screens/home_screen/home_screen.dart';
 
 
 
 class AppRouter {
-  static Route<dynamic> onGenerateRoute(RouteSettings settings) {
+
+  final GetBillingSettingsUseCase getBillingSettings;
+  final SyncBillingSettingsUseCase syncBillingSettings;
+
+  AppRouter({
+    required this.getBillingSettings,
+    required this.syncBillingSettings,
+  });
+   Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.splash:
-        return MaterialPageRoute(builder: (context) => SplashScreen());
+        return MaterialPageRoute(builder: (context) => SplashScreen(getBillingSettings: getBillingSettings,syncBillingSettings: syncBillingSettings,));
       case RouteNames.settings:
         return MaterialPageRoute(builder: (_) =>  SettingsScreen());
       case RouteNames.camera:
-        final customerId = settings.arguments as String;
-        return MaterialPageRoute(builder: (_) =>  CameraScreen(customerId: customerId,));
-      case RouteNames.customerDetails:
-        final entity = settings.arguments as CustomerEntity ;
-        return MaterialPageRoute(builder: (_) =>  CustomerDetailsScreen(customer: entity,));
+        final userId = settings.arguments as String;
+        return MaterialPageRoute(builder: (_) =>  CameraScreen(userId: userId,));
+      case RouteNames.userDetails:
+        final entity = settings.arguments as UserEntity ;
+        return MaterialPageRoute(builder: (_) =>  UserDetailsScreen(user: entity,));
       case RouteNames.home:
         return MaterialPageRoute(builder: (_) =>  HomeScreen());
       case RouteNames.guide:
         return MaterialPageRoute(builder: (_) => const GuideScreen());
-      case RouteNames.addCustomerScreen:
-        return MaterialPageRoute(builder: (_) => const AddCustomerScreen());
+      case RouteNames.addUserScreen:
+        return MaterialPageRoute(builder: (_) => const AddUserScreen());
       case RouteNames.preview:
         final args = settings.arguments as Map<String, dynamic>;
         final imageFile = args['imageFile'] as File ;
-        final customerId = args['customerId'] as String;
-        return MaterialPageRoute(builder: (_) =>  PreviewScreen(imageFile: imageFile,customerId: customerId,));
+        final userId = args['userId'] as String;
+        return MaterialPageRoute(builder: (_) =>  PreviewScreen(imageFile: imageFile,userId: userId,));
       case RouteNames.result:
         final entity =  settings.arguments  as MeterReadingEntity;
         return MaterialPageRoute(builder: (_) =>  ResultScreen(entity: entity,));
@@ -69,4 +79,5 @@ class AppRouter {
         );
     }
   }
+
 }

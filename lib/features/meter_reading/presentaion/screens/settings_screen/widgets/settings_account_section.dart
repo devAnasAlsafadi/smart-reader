@@ -20,10 +20,10 @@ class SettingsAccountSection extends StatelessWidget {
       children: [
         TitleSection(title:LocaleKeys.account.t,),
         BuildSettingsSection(
-          title: UserSession.userName.isEmpty
+          title: EmployeeSession.employeeName.isEmpty
               ? LocaleKeys.account.t
-              : UserSession.userName,
-          subtitle: UserSession.currentUser?.emailHive ?? '',
+              : EmployeeSession.employeeName,
+          subtitle: EmployeeSession.currentEmployee?.emailHive ?? '',
           trailing: const Icon(Icons.arrow_forward_ios, size: 16),
           leading: const Icon(Icons.person_pin_outlined),
         ),

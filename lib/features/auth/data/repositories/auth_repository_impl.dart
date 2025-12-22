@@ -1,4 +1,4 @@
-import '../../domain/entities/user_entity.dart';
+import '../../domain/entities/employee_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../data_source/auth_local_data_source.dart';
 import '../data_source/auth_remote_data_source.dart';
@@ -10,19 +10,19 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl(this.local, this.remote);
 
   @override
-  Future<UserEntity> login(String email, String password) async {
-    final remoteUser = await remote.login(email, password);
-    await local.saveUser(remoteUser);
-    return remoteUser;
+  Future<EmployeeEntity> login(String email, String password) async {
+    final remoteEmployee = await remote.login(email, password);
+    await local.saveEmployee(remoteEmployee);
+    return remoteEmployee;
   }
 
   @override
-  Future<UserEntity?> getCurrentUser() async {
-    return await local.getUser();
+  Future<EmployeeEntity?> getCurrentEmployee() async {
+    return await local.getEmployee();
   }
 
   @override
   Future<void> logout() async {
-    await local.clearUser();
+    await local.clearEmployee();
   }
 }

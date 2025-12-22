@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Core
-import 'package:smart_reader/core/routes/navigation_manager.dart';
-import 'package:smart_reader/core/routes/route_name.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
-import 'package:smart_reader/core/utils/app_dialog.dart';
 import 'package:smart_reader/core/utils/app_dimens.dart';
-import 'package:smart_reader/core/utils/app_snackbar.dart';
 
 // Localization
 import 'package:smart_reader/core/extensions/localization_extension.dart';
@@ -22,9 +18,7 @@ import 'package:smart_reader/generated/locale_keys.g.dart';
 // Features – Meter Reading
 import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
-import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_state.dart';
-import 'package:smart_reader/features/meter_reading/presentaion/widgets/action_button.dart';
 
 class ResultScreen extends StatefulWidget {
   const ResultScreen({super.key, required this.entity});

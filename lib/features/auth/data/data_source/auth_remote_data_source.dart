@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/user_model.dart';
+import '../models/employee_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<UserModel> login(String email, String password);
+  Future<EmployeeModel> login(String email, String password);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -17,7 +17,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       _fireStore = fireStore ?? FirebaseFirestore.instance;
 
   @override
-  Future<UserModel> login(String email, String password) async {
+  Future<EmployeeModel> login(String email, String password) async {
     try {
       final userCred = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -25,8 +25,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
       final uid = userCred.user!.uid;
       final token = await userCred.user!.getIdToken();
-      final doc = await _fireStore.collection("users").doc(uid).get();
-      return UserModel.fromFireStore(uid, doc.data()!, token!);
+      final doc = await _fireStore.collection("employees").doc(uid).get();
+      return EmployeeModel.fromFireStore(uid, doc.data()!, token!);
     } catch (e) {
       log('FirebaseUserRepo Error: $e');
       rethrow;

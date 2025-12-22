@@ -55,7 +55,7 @@ class HistoryScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = items[index];
                   return HistoryListItem(
-                    customer: item.customer,
+                    user: item.user,
                     reading: item.reading,
                   );
                 },

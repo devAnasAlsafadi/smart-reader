@@ -1,6 +1,6 @@
 class PaymentEntity {
   final String id;
-  final String customerId;
+  final String userId;
   final double amount;
   final String note;
   final DateTime timestamp;
@@ -9,7 +9,7 @@ class PaymentEntity {
 
   PaymentEntity({
     required this.id,
-    required this.customerId,
+    required this.userId,
     required this.amount,
     required this.note,
     required this.timestamp,
