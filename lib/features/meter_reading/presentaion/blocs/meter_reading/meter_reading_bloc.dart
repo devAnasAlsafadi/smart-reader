@@ -45,9 +45,6 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
     on<SaveReadingEvent>((event, emit) async {
       emit(ReadingSavedLoadingState());
       try {
-
-
-
         final entity = MeterReadingEntity(
           id:event.entity.id,
           calculationModeUsed: event.entity.calculationModeUsed,
@@ -63,15 +60,18 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
           imageUrl: '',
           synced: false,
         );
-
+        print('enter try');
         final result = await addReading(entity);
+        print('enter sucess');
 
         emit(ReadingSavedSuccessState(result));
 
       } catch (e) {
+        print('enter failure');
         emit(ReadingSavedFailureState(e.toString()));
       }
     });
+
 
 
     on<LoadReadingsEvent>((event, emit) async {

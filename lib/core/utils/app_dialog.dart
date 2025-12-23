@@ -173,7 +173,7 @@ class AppDialog {
 
   static Future<void> showReadingResult(
       BuildContext context, {
-        required ReadingCalculationResult result,
+        required ReadingSaveResult result,
       }) {
     return showDialog(
       context: context,
@@ -216,39 +216,60 @@ class AppDialog {
               const SizedBox(height: 20),
 
               // Previous / New
-              _valueRow(  LocaleKeys.previous_reading.t,
-                  result.previousValue),
+              _valueRow(
+                LocaleKeys.previous_reading.t,
+                result.previousValue,
+              ),
               _divider(),
-              _valueRow(LocaleKeys.new_reading.t, result.newValue),
+              _valueRow(
+                LocaleKeys.new_reading.t,
+                result.newValue,
+              ),
 
               const SizedBox(height: 14),
 
-              // Consumption
-              _highlightBox(
-                label: LocaleKeys.consumption.t,
-                value:
-                "${result.consumption.toStringAsFixed(2)} kWh",
-                color: AppColors.primary,
-              ),
+              // 🔹 Consumption
+              if (result.type == ReadingResultType.localCalculated)
+                _highlightBox(
+                  label: LocaleKeys.consumption.t,
+                  value:
+                  "${result.consumption!.toStringAsFixed(2)} kWh",
+                  color: AppColors.primary,
+                )
+              else if (result.type == ReadingResultType.cloudPending)
+                _highlightBox(
+                  label: LocaleKeys.consumption.t,
+                  value: LocaleKeys.calculation_pending.t,
+                  color: AppColors.primary,
+                ),
 
-              const SizedBox(height: 10),
+              if (result.type != ReadingResultType.initial)
+                const SizedBox(height: 10),
 
-              // Cost
-              _highlightBox(
-                label: LocaleKeys.cost_added.t,
-                value:
-                "₪ ${result.cost.toStringAsFixed(2)}",
-                color: AppColors.accentGreen,
-                isPositive: true,
-              ),
+              // 🔹 Cost
+              if (result.type == ReadingResultType.localCalculated)
+                _highlightBox(
+                  label: LocaleKeys.cost_added.t,
+                  value:
+                  "₪ ${result.cost!.toStringAsFixed(2)}",
+                  color: AppColors.accentGreen,
+                  isPositive: true,
+                )
+              else if (result.type == ReadingResultType.cloudPending)
+                _highlightBox(
+                  label: LocaleKeys.cost_added.t,
+                  value: LocaleKeys.calculation_pending.t,
+                  color: AppColors.accentGreen,
+                ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
 
-              Text(
-                LocaleKeys.balance_added_message.t,
-                style: AppTextStyles.caption,
-                textAlign: TextAlign.center,
-              ),
+              if (result.type != ReadingResultType.initial)
+                Text(
+                  LocaleKeys.balance_added_message.t,
+                  style: AppTextStyles.caption,
+                  textAlign: TextAlign.center,
+                ),
 
               const SizedBox(height: 18),
 
@@ -273,13 +294,13 @@ class AppDialog {
       ),
     );
   }
-  static Widget _valueRow(String label, double value) {
+  static Widget _valueRow(String label, double? value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: AppTextStyles.caption),
         Text(
-          value.toStringAsFixed(2),
+          value != null ? value.toStringAsFixed(2) : "-",
           style: AppTextStyles.body,
         ),
       ],

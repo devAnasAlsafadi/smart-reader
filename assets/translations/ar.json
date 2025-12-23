@@ -170,7 +170,8 @@
   "phone_number": "رقم الجوال",
   "id_number": "رقم الهوية",
   "id_number_hint": "أدخل رقم هويتك",
-  "electrical_panel": "طابلون الكهرباء"
+  "electrical_panel": "طابلون الكهرباء",
+  "calculation_pending": "قيد المعالجة في النظام"
 
 
 }

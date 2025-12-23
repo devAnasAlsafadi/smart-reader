@@ -22,7 +22,6 @@ class BillingBloc extends Bloc<BillingEvent, BillingState> {
 
       try {
         final readings = await getReadings(event.userId);
-
         final payments = await getPayments(event.userId);
 
         final result = await calculateBilling(

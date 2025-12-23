@@ -170,7 +170,9 @@
   "phone_number": "Phone Number",
   "id_number": "ID Number",
   "id_number_hint": "Enter National Id Number",
-  "electrical_panel": "Electrical Panel "
+  "electrical_panel": "Electrical Panel ",
+  "calculation_pending": "Calculation pending"
+
 
 
 }

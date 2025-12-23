@@ -5,11 +5,11 @@ import 'package:smart_reader/features/meter_reading/data/models/meter_reading_mo
 
 abstract class MeterReadingLocalDataSource {
   Future<void> addReading(MeterReadingModel model);
-  Future<List<MeterReadingModel>> getCustomerReading(String customerId);
+  Future<List<MeterReadingModel>> getUserReading(String userId);
   Future<void> deleteReading(String id);
   Future<void> updateReading(MeterReadingModel model);
   Future<MeterReadingModel?> getById(String meterReadingId);
-  Future<MeterReadingModel?> getLastReading(String customerId);
+  Future<MeterReadingModel?> getLastReading(String userId);
 
 }
 
@@ -28,10 +28,14 @@ class MeterReadingLocalDataSourceImpl implements MeterReadingLocalDataSource{
   }
 
   @override
-  Future<List<MeterReadingModel>> getCustomerReading(String customerId)async {
-    return  box.values.where((element) => element.userId == customerId,).toList();
-  }
+  Future<List<MeterReadingModel>> getUserReading(String userId) async {
+    final list = box.values
+        .where((e) => e.userId == userId && !e.isDeleted)
+        .toList();
 
+    list.sort((a, b) => a.timestamp.compareTo(b.timestamp));
+    return list;
+  }
   @override
   Future<void> updateReading(MeterReadingModel model)async {
     await box.put(model.idHive, model);
@@ -47,18 +51,8 @@ class MeterReadingLocalDataSourceImpl implements MeterReadingLocalDataSource{
   }
 
   @override
-  Future<MeterReadingModel?> getLastReading(String customerId) async {
-    final readings = box.values
-        .where((e) => e.userId == customerId && !e.isDeleted)
-        .toList();
-
-    if (readings.isEmpty) return null;
-
-    readings.sort(
-          (a, b) => b.timestamp.compareTo(a.timestamp),
-    );
-
-    return readings.first;
+  Future<MeterReadingModel?> getLastReading(String userId) async {
+    final list = await getUserReading(userId);
+    return list.isEmpty ? null : list.last;
   }
-
 }

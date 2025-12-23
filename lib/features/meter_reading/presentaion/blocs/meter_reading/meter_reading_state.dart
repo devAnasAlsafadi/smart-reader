@@ -36,7 +36,7 @@ class ReadingsLoadedState extends MeterReadingState {
 class ReadingSavedLoadingState extends MeterReadingState {}
 class ReadingSavedSuccessState extends MeterReadingState {
 
-  final ReadingCalculationResult? result;
+  final ReadingSaveResult result;
   ReadingSavedSuccessState(this.result);
 }
 

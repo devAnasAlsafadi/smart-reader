@@ -34,19 +34,17 @@ class PaymentModel extends PaymentEntity {
 
   Map<String,dynamic> toJson(){
     return {
-      "id": idHive,
       "userId": userIdHive,
       "amount": amountHive,
       "note": noteHive,
       "timestamp": timestampHive.toIso8601String(),
       "synced": syncedHive,
-      "isDeleted": isDeletedHive,
     };
   }
 
-  factory PaymentModel.fromJson(Map<String,dynamic> json){
+  factory PaymentModel.fromJson(Map<String,dynamic> json,String id){
     return PaymentModel(
-      idHive: json["id"],
+      idHive: id,
       userIdHive: json["userId"],
       amountHive: json["amount"].toDouble(),
       noteHive: json["note"],

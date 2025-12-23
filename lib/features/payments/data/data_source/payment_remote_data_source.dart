@@ -7,7 +7,7 @@ abstract class PaymentRemoteDataSource{
   Future<void> addPayment(PaymentModel model);
   Future<void> updatePayment(PaymentModel model);
   Future<void> deletePayment(String id);
-  Future<List<PaymentModel>> getPayments(String customerId);
+  Future<List<PaymentModel>> getPayments(String userId);
 }
 
 
@@ -36,13 +36,13 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource{
   }
 
   @override
-  Future<List<PaymentModel>> getPayments(String customerId)async {
+  Future<List<PaymentModel>> getPayments(String userId)async {
 
     try{
       final snap = await collection
-          .where("customerId", isEqualTo: customerId)
+          .where("userId", isEqualTo: userId)
           .get();
-      return  snap.docs.map((e) => PaymentModel.fromJson(e.data()),).toList();
+      return  snap.docs.map((doc) => PaymentModel.fromJson(doc.data(),doc.id),).toList();
     }catch (e) {
       rethrow;
     }

@@ -5,13 +5,11 @@ import 'package:smart_reader/core/routes/navigation_manager.dart';
 import 'package:smart_reader/core/routes/route_name.dart';
 import 'package:smart_reader/core/utils/app_dialog.dart';
 import 'package:smart_reader/core/utils/app_snackbar.dart';
-import 'package:smart_reader/core/extensions/localization_extension.dart';
-import 'package:smart_reader/generated/locale_keys.g.dart';
-
 import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
-import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_state.dart';
+import '../../../data/repositories/meter_reading_repository_impl.dart';
+import '../../blocs/meter_reading/meter_reading_state.dart';
 
 class ResultScreenController {
   ResultScreenController({
@@ -62,16 +60,28 @@ class ResultScreenController {
     }
 
     if (state is ReadingSavedSuccessState) {
-      AppSnackBar.success(context, LocaleKeys.reading_saved_success.t);
+      Navigator.pop(context);
+      final r = state.result;
 
-      if (state.result != null && state.result!.cost > 0) {
-        await AppDialog.showReadingResult(context, result: state.result!);
+      if (r.type == ReadingResultType.localCalculated) {
+        await AppDialog.showReadingResult(
+          context,
+          result: r
+        );
+      }
+
+      if (r.type == ReadingResultType.cloudPending) {
+        await AppDialog.showReadingResult(
+          context,
+         result: r
+        );
       }
 
       NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.home);
     }
 
     if (state is ReadingSavedFailureState) {
+      print('failure');
       Navigator.pop(context);
       AppSnackBar.error(context, state.message);
     }

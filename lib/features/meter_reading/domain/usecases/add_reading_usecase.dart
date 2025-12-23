@@ -5,9 +5,10 @@ import '../repositories/meter_reading_repository.dart';
 class AddReadingUseCase {
   final MeterReadingRepository repo;
 
+
   AddReadingUseCase(this.repo);
 
-  Future<ReadingCalculationResult> call(MeterReadingEntity entity) async {
+  Future<ReadingSaveResult> call(MeterReadingEntity entity) async {
     return await repo.addReading(entity);
   }
 }

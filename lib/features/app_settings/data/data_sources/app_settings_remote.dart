@@ -8,7 +8,7 @@ class AppSettingsRemoteDataSource {
   final _doc = FirebaseFirestore
       .instance
       .collection('app_settings')
-      .doc('billing');
+      .doc('billing') ;
 
   Future<BillingSettingsModel> fetch() async {
     final snap = await _doc.get();

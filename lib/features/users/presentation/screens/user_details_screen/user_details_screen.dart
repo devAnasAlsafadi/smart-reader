@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 // Localization
 import 'package:easy_localization/easy_localization.dart';
 import 'package:smart_reader/core/extensions/localization_extension.dart';
+import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
 import 'package:smart_reader/generated/locale_keys.g.dart';
 
 // Core
@@ -27,6 +28,7 @@ import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/bi
 import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_bloc.dart';
 import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/payment_state.dart';
 
+import '../../../../payments/presentaion/blocs/payment_bloc/payment_event.dart';
 import '../../../domain/entities/user_entity.dart';
 import '../../widgets/add_payment_bottomsheet.dart';
 import '../../widgets/billing_wallet_card.dart';
@@ -49,7 +51,10 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   void initState() {
     super.initState();
     context.read<BillingBloc>().add(LoadBillingEvent(widget.user.id));
+    context.read<MeterReadingBloc>().add(SyncOfflineReadingsEvent(widget.user.id));
+    context.read<PaymentBloc>().add(SyncPaymentsEvent(widget.user.id));
   }
+
 
   @override
   Widget build(BuildContext context) {

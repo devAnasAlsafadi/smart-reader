@@ -6,11 +6,27 @@ import 'monthly_statement.dart';
 
 class BillingCalculator {
 
+  List<MeterReadingEntity> _onlyCalculatedReadings(
+      List<MeterReadingEntity> readings,
+      ) {
+    return readings.where((r) =>
+    r.cost > 0 &&
+        (r.calculationModeUsed == 'local' ||
+            r.calculationModeUsed == 'cloud')
+    ).toList();
+  }
+
+
+
+
   BillingSummary calculateSummary(
       List<MeterReadingEntity> readings,
       List<PaymentEntity> payments,
       ) {
-    final totalCost = readings.fold<double>(
+
+    final calculatedReadings = _onlyCalculatedReadings(readings);
+
+    final totalCost = calculatedReadings.fold<double>(
       0.0,
           (sum, r) => sum + r.cost,
     );
@@ -65,7 +81,11 @@ class BillingCalculator {
             (a, b) => b.timestamp.compareTo(a.timestamp),
       );
 
-      final readingsCost = monthlyReadings.fold<double>(
+
+      final calculatedMonthlyReadings =
+      _onlyCalculatedReadings(monthlyReadings);
+
+      final readingsCost = calculatedMonthlyReadings.fold<double>(
         0.0,
             (sum, r) => sum + r.cost,
       );

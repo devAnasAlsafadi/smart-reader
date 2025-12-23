@@ -66,7 +66,6 @@ class MeterReadingModel extends MeterReadingEntity {
 
   Map<String, dynamic> toJson() =>
       {
-        'id': idHive,
         'userId': userIdHive,
         'meterValue': meterValueHive,
         'consumption': consumptionHive,
@@ -80,9 +79,9 @@ class MeterReadingModel extends MeterReadingEntity {
         'synced': syncedHive,
       };
 
-  factory MeterReadingModel.fromJson(Map<String, dynamic> json) {
+  factory MeterReadingModel.fromJson(Map<String, dynamic> json,String id) {
     return MeterReadingModel(
-      idHive: json['id'],
+      idHive: id,
       userIdHive: json['userId'],
       meterValueHive: (json['meterValue'] as num).toDouble(),
       consumptionHive: (json['consumption'] as num).toDouble(),

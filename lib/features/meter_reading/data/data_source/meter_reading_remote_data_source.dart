@@ -6,7 +6,7 @@ abstract class MeterReadingRemoteDataSource{
   Future<void> addReading(MeterReadingModel model);
   Future<void> updateReading(MeterReadingModel model);
   Future<void> deleteReading(String id);
-  Future<List<MeterReadingModel>> getCustomerReading(String customerId);
+  Future<List<MeterReadingModel>> getUserReading(String userId);
 }
 
 
@@ -35,13 +35,13 @@ class MeterReadingRemoteDataSourceImpl implements MeterReadingRemoteDataSource{
   }
 
   @override
-  Future<List<MeterReadingModel>> getCustomerReading(String customerId)async {
+  Future<List<MeterReadingModel>> getUserReading(String userId)async {
 
     try{
       final snap = await collection
-        .where("customerId", isEqualTo: customerId)
+        .where("userId", isEqualTo: userId)
         .get();
-      return  snap.docs.map((e) => MeterReadingModel.fromJson(e.data()),).toList();
+      return  snap.docs.map((e) => MeterReadingModel.fromJson(e.data(),e.id)).toList();
     }catch (e) {
       rethrow;
     }
@@ -49,11 +49,9 @@ class MeterReadingRemoteDataSourceImpl implements MeterReadingRemoteDataSource{
 
   @override
   Future<void> updateReading(MeterReadingModel model) async{
-
     try{
       await collection.doc(model.id).update(model.toJson());
     }catch (e){
-
       rethrow;
     }
 
