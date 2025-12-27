@@ -3,6 +3,8 @@
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_reader/features/meter_reading/data/models/meter_reading_model.dart';
+import 'package:smart_reader/features/meter_reading/domain/usecases/listen_to_reading_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/sync_offline_readings_usecase.dart';
 import '../../../../../core/constants.dart';
 import 'meter_reading_event.dart';
@@ -18,6 +20,7 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
   final ProcessImageUseCase processImage;
   final ExtractDigitsUseCase extractDigits;
   final AddReadingUseCase addReading;
+  final ListenToReadingUsecase watchReading;
   final GetReadingsUseCase getReadings;
   final DeleteReadingUseCase deleteReading;
   final SyncOfflineReadingsUseCase syncOffline;
@@ -29,6 +32,7 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
     required this.getReadings,
     required this.deleteReading,
     required this.syncOffline,
+    required this.watchReading,
   }) : super(OcrInitialState()) {
 
     on<ProcessImageEvent>((event, emit) async {
@@ -82,14 +86,24 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
 
 
     on<DeleteReadingEvent>((event, emit) async {
+      emit(ReadingLoadingDeleteState());
       await deleteReading(event.id);
-      emit(ReadingDeletedState());
+      emit(ReadingDeletedSuccessState());
     });
 
     on<SyncOfflineReadingsEvent>((event, emit) async {
       await syncOffline(event.userId);
     });
 
+    on<ListenToReadingEvent>((event, emit) async {
+      await emit.forEach<MeterReadingEntity>(
+        watchReading(event.readingId),
+        onData: (reading) => ListenToReadingState(reading),
+        onError: (error, stackTrace) {
+          return ReadingSavedFailureState(error.toString());
+          },
+      );
+    });
   }
 
 

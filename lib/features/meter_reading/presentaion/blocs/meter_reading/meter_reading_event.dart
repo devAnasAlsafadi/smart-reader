@@ -62,3 +62,8 @@ class SyncOfflineReadingsEvent extends MeterReadingEvent {
   @override
   List<Object?> get props => [userId];
 }
+
+class ListenToReadingEvent extends MeterReadingEvent {
+  final String readingId;
+  ListenToReadingEvent(this.readingId);
+}

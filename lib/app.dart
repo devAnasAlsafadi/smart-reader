@@ -22,6 +22,7 @@ import 'package:smart_reader/features/meter_reading/domain/usecases/add_reading_
 import 'package:smart_reader/features/meter_reading/domain/usecases/delete_reading_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/extract_digits_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/get_readings_usecase.dart';
+import 'package:smart_reader/features/meter_reading/domain/usecases/listen_to_reading_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/process_image_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/sync_offline_readings_usecase.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/history_bloc/history_bloc.dart';
@@ -133,6 +134,7 @@ class _SmartReaderAppState extends State<SmartReaderApp> {
       providers: [
         BlocProvider(
           create: (_) => MeterReadingBloc(
+            watchReading: ListenToReadingUsecase(meterReadingRepo),
             addReading: AddReadingUseCase(meterReadingRepo),
             deleteReading: DeleteReadingUseCase(meterReadingRepo),
             getReadings: GetReadingsUseCase(meterReadingRepo),

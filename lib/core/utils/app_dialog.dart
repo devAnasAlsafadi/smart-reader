@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:smart_reader/core/extensions/localization_extension.dart';
 import 'package:smart_reader/core/theme/app_color.dart';
 import 'package:smart_reader/core/theme/app_text_style.dart';
@@ -6,20 +7,17 @@ import 'package:smart_reader/core/theme/app_text_style.dart';
 import '../../features/meter_reading/data/repositories/meter_reading_repository_impl.dart';
 import '../../generated/locale_keys.g.dart';
 
-
 class AppDialog {
   static Future<void> showInfo(
-      BuildContext context, {
-        required String title,
-        required String message,
-        String buttonText = "OK",
-      }) {
+    BuildContext context, {
+    required String title,
+    required String message,
+    String buttonText = "OK",
+  }) {
     return showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: Text(title, style: AppTextStyles.heading2),
         content: Text(message, style: AppTextStyles.bodySecondary),
         actions: [
@@ -34,58 +32,46 @@ class AppDialog {
 
   /// Confirmation dialog (used for delete etc.)
   static Future<bool?> showConfirm(
-      BuildContext context, {
-        required String title,
-        required String message,
-        String? confirmText,
-        String? cancelText,
-        Color confirmColor = AppColors.accentRed,
-      }) {
+    BuildContext context, {
+    required String title,
+    required String message,
+    String? confirmText,
+    String? cancelText,
+    Color confirmColor = AppColors.accentRed,
+  }) {
     return showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         title: Text(title, style: AppTextStyles.heading2),
-        content: Text(
-          message,
-          style: AppTextStyles.bodySecondary,
-        ),
+        content: Text(message, style: AppTextStyles.bodySecondary),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text(  cancelText ?? LocaleKeys.cancel.t,
-            ),
+            child: Text(cancelText ?? LocaleKeys.cancel.t),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: confirmColor,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: confirmColor),
             onPressed: () => Navigator.pop(context, true),
-            child: Text(  confirmText ?? LocaleKeys.step_confirm.t,
-            ),
+            child: Text(confirmText ?? LocaleKeys.step_confirm.t),
           ),
         ],
       ),
     );
   }
 
-
   static Future<bool?> showDeleteConfirm(
-      BuildContext context, {
-        required String title,
-        required String message,
-        String? confirmText,
-        String? cancelText,
-      }) {
+    BuildContext context, {
+    required String title,
+    required String message,
+    String? confirmText,
+    String? cancelText,
+  }) {
     return showDialog<bool>(
       context: context,
       builder: (_) => Dialog(
         insetPadding: const EdgeInsets.symmetric(horizontal: 30),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         child: Padding(
           padding: const EdgeInsets.all(22),
           child: Column(
@@ -111,18 +97,12 @@ class AppDialog {
               const SizedBox(height: 22),
 
               // Dynamic Title
-              Text(
-                title,
-                style: AppTextStyles.heading2,
-              ),
+              Text(title, style: AppTextStyles.heading2),
 
               const SizedBox(height: 10),
 
               // Dynamic Message
-              Text(
-                message,
-                style: AppTextStyles.bodySecondary,
-              ),
+              Text(message, style: AppTextStyles.bodySecondary),
 
               const SizedBox(height: 25),
 
@@ -138,8 +118,7 @@ class AppDialog {
                     ),
                   ),
                   onPressed: () => Navigator.pop(context, true),
-                  child: Text(  confirmText ?? LocaleKeys.step_confirm.t,
-                  ),
+                  child: Text(confirmText ?? LocaleKeys.step_confirm.t),
                 ),
               ),
 
@@ -170,11 +149,20 @@ class AppDialog {
     );
   }
 
+  static void showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+  }
 
   static Future<void> showReadingResult(
-      BuildContext context, {
-        required ReadingSaveResult result,
-      }) {
+    BuildContext context, {
+    required ReadingSaveResult result,
+  }) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -192,17 +180,20 @@ class AppDialog {
             children: [
               // ✅ Icon
               Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.accentGreen.withValues(alpha: .15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.check_circle,
-                  color: AppColors.accentGreen,
-                  size: 42,
-                ),
-              ),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentGreen.withValues(alpha: .15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check_circle,
+                      color: AppColors.accentGreen,
+                      size: 42,
+                    ),
+                  )
+                  .animate()
+                  .scale(duration: 500.ms, curve: Curves.easeOutBack)
+                  .shimmer(delay: 600.ms, duration: 1.seconds),
 
               const SizedBox(height: 16),
 
@@ -211,37 +202,40 @@ class AppDialog {
                 LocaleKeys.reading_added_successfully.t,
                 style: AppTextStyles.heading3,
                 textAlign: TextAlign.center,
-              ),
+              ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2, end: 0),
 
               const SizedBox(height: 20),
 
-              // Previous / New
-              _valueRow(
-                LocaleKeys.previous_reading.t,
-                result.previousValue,
-              ),
-              _divider(),
-              _valueRow(
-                LocaleKeys.new_reading.t,
-                result.newValue,
-              ),
-
+              Column(
+                children: [
+                  _valueRow(
+                    LocaleKeys.previous_reading.t,
+                    result.previousValue,
+                  ),
+                  _divider(),
+                  _valueRow(LocaleKeys.new_reading.t, result.newValue),
+                ],
+              ).animate().fadeIn(delay: 400.ms).slideX(begin: -0.1, end: 0),
               const SizedBox(height: 14),
 
               // 🔹 Consumption
               if (result.type == ReadingResultType.localCalculated)
                 _highlightBox(
-                  label: LocaleKeys.consumption.t,
-                  value:
-                  "${result.consumption!.toStringAsFixed(2)} kWh",
-                  color: AppColors.primary,
-                )
+                      label: LocaleKeys.consumption.t,
+                      value: "${result.consumption!.toStringAsFixed(2)} kWh",
+                      color: AppColors.primary,
+                    )
+                    .animate(delay: 600.ms)
+                    .scale(begin: const Offset(0.9, 0.9))
+                    .fadeIn()
               else if (result.type == ReadingResultType.cloudPending)
                 _highlightBox(
-                  label: LocaleKeys.consumption.t,
-                  value: LocaleKeys.calculation_pending.t,
-                  color: AppColors.primary,
-                ),
+                      label: LocaleKeys.consumption.t,
+                      value: LocaleKeys.calculation_pending.t,
+                      color: AppColors.primary,
+                    )
+                    .animate(onPlay: (controller) => controller.repeat())
+                    .shimmer(duration: 2.seconds),
 
               if (result.type != ReadingResultType.initial)
                 const SizedBox(height: 10),
@@ -250,17 +244,18 @@ class AppDialog {
               if (result.type == ReadingResultType.localCalculated)
                 _highlightBox(
                   label: LocaleKeys.cost_added.t,
-                  value:
-                  "₪ ${result.cost!.toStringAsFixed(2)}",
+                  value: "₪ ${result.cost!.toStringAsFixed(2)}",
                   color: AppColors.accentGreen,
                   isPositive: true,
-                )
+                ).animate(delay: 800.ms).fadeIn().slideY(begin: 0.1)
               else if (result.type == ReadingResultType.cloudPending)
                 _highlightBox(
-                  label: LocaleKeys.cost_added.t,
-                  value: LocaleKeys.calculation_pending.t,
-                  color: AppColors.accentGreen,
-                ),
+                      label: LocaleKeys.cost_added.t,
+                      value: LocaleKeys.calculation_pending.t,
+                      color: AppColors.accentGreen,
+                    )
+                    .animate(onPlay: (controller) => controller.repeat())
+                    .shimmer(duration: 2.seconds),
 
               const SizedBox(height: 14),
 
@@ -287,13 +282,14 @@ class AppDialog {
                   onPressed: () => Navigator.pop(context),
                   child: Text(LocaleKeys.got_it.t),
                 ),
-              ),
+              ).animate(delay: 1.seconds).fadeIn(),
             ],
           ),
         ),
       ),
     );
   }
+
   static Widget _valueRow(String label, double? value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,10 +326,7 @@ class AppDialog {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            label,
-            style: AppTextStyles.body.copyWith(color: color),
-          ),
+          Text(label, style: AppTextStyles.body.copyWith(color: color)),
           Text(
             value,
             style: AppTextStyles.body.copyWith(
@@ -345,5 +338,4 @@ class AppDialog {
       ),
     );
   }
-
 }

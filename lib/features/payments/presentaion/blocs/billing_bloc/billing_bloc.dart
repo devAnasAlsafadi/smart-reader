@@ -17,9 +17,10 @@ class BillingBloc extends Bloc<BillingEvent, BillingState> {
     required this.getPayments,
     required this.calculateBilling,
   }) : super(const BillingState()) {
+
+
     on<LoadBillingEvent>((event, emit) async {
       emit(state.copyWith(isLoading: true));
-
       try {
         final readings = await getReadings(event.userId);
         final payments = await getPayments(event.userId);

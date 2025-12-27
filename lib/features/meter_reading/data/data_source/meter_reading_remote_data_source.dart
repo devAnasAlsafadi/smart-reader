@@ -7,7 +7,9 @@ abstract class MeterReadingRemoteDataSource{
   Future<void> updateReading(MeterReadingModel model);
   Future<void> deleteReading(String id);
   Future<List<MeterReadingModel>> getUserReading(String userId);
-}
+  Stream<MeterReadingModel> listenToReading(String readingId) ;
+
+  }
 
 
 class MeterReadingRemoteDataSourceImpl implements MeterReadingRemoteDataSource{
@@ -55,6 +57,18 @@ class MeterReadingRemoteDataSourceImpl implements MeterReadingRemoteDataSource{
       rethrow;
     }
 
+
   }
+
+  @override
+  Stream<MeterReadingModel> listenToReading(String readingId) {
+    return FirebaseFirestore.instance
+        .collection('meter_readings')
+        .doc(readingId)
+        .snapshots()
+        .where((snap) => snap.exists)
+        .map((snap) => MeterReadingModel.fromJson(snap.data()!,snap.id));
+  }
+
 
 }

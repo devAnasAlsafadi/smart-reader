@@ -21,17 +21,22 @@ class ElectricalPanelDropdown extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
     return DropdownButtonFormField<ElectricalPanelEntity>(
+      initialValue: value,
       isExpanded: true,
+      menuMaxHeight: 350,
+      alignment: AlignmentDirectional.bottomStart,
+      borderRadius: BorderRadius.circular(AppDimens.radius),
       style: AppTextStyles.body,
       decoration: InputDecoration(
+        // labelText: LocaleKeys.electrical_panel.t,
         hintText: LocaleKeys.select_electrical_panel.t,
         prefixIcon: const Icon(
           Icons.flash_on_rounded,
           color: AppColors.primary,
         ),
-
+        contentPadding:  EdgeInsets.all(AppDimens.padding),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: const BorderSide(color: AppColors.border),
@@ -52,13 +57,10 @@ class ElectricalPanelDropdown extends StatelessWidget {
       items: panels.map((panel) {
         return DropdownMenuItem<ElectricalPanelEntity>(
           value: panel,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              panel.name,
-              style: AppTextStyles.body,
-              overflow: TextOverflow.ellipsis,
-            ),
+          child: Text(
+            panel.name,
+            style: AppTextStyles.body,
+            overflow: TextOverflow.ellipsis,
           ),
         );
       }).toList(),

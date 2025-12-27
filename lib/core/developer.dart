@@ -1,36 +1,30 @@
-import 'dart:developer';
+import 'dart:developer' as dev;
 import 'package:flutter/foundation.dart';
 
-class IO {
-  logError(String text) {
-    log("-------------ERROR------------ $text");
-  }
-}
+class AppLogger {
 
-/// Global developer utilities (logging, flags, etc.)
-class Developer {
-  /// Toggle this to false in production builds if needed.
-  static const bool isDebug = kDebugMode;
+  static const bool _isDebug = kDebugMode;
 
-  /// Simple logger that respects [isDebug].
-  static void log(
-      Object? message, {
-        String tag = 'DEBUG',
-      }) {
-    if (!isDebug) return;
-    debugPrint('[$tag] $message');
+
+  static void info(String message, {String tag = 'INFO'}) {
+    if (!_isDebug) return;
+    dev.log(message, name: tag, time: DateTime.now());
   }
 
-  /// Log errors with optional stack trace.
-  static void logError(
-      Object error, {
-        String tag = 'ERROR',
-        StackTrace? stackTrace,
-      }) {
-    if (!isDebug) return;
-    debugPrint('[$tag] $error');
-    if (stackTrace != null) {
-      debugPrint(stackTrace.toString());
-    }
+  static void debug(String message, {String tag = 'DEBUG'}) {
+    if (!_isDebug) return;
+    dev.log('🔍 $message', name: tag);
   }
+
+
+  static void error(String message, {Object? error, StackTrace? stack, String tag = 'ERROR'}) {
+    if (!_isDebug) return;
+    dev.log(
+      '❌ $message',
+      name: tag,
+      error: error,
+      stackTrace: stack,
+    );
+  }
+
 }

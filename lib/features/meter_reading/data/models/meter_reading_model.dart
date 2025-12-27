@@ -26,6 +26,7 @@ class MeterReadingModel extends MeterReadingEntity {
   @HiveField(11) final String? imageUrlHive;
   @HiveField(12) final bool syncedHive;
   @HiveField(13) final bool isDeletedHive;
+  @HiveField(14) final double? previousValueHive;
 
 
   MeterReadingModel({
@@ -43,6 +44,7 @@ class MeterReadingModel extends MeterReadingEntity {
     required this.pricePerKwhUsedHive,
     required this.settingsVersionUsedHive,
     this.imageUrlHive,
+    this.previousValueHive
   }) : super(
     id: idHive,
     userId: userIdHive,
@@ -50,7 +52,7 @@ class MeterReadingModel extends MeterReadingEntity {
     consumption: consumptionHive,
     cost: costHive,
     timestamp: timestampHive,
-
+    previousValue: previousValueHive,
     pricePerKwhUsed: pricePerKwhUsedHive,
     minMonthlyFeeUsed: minMonthlyFeeUsedHive,
     calculationModeUsed: calculationModeUsedHive,
@@ -82,18 +84,20 @@ class MeterReadingModel extends MeterReadingEntity {
   factory MeterReadingModel.fromJson(Map<String, dynamic> json,String id) {
     return MeterReadingModel(
       idHive: id,
-      userIdHive: json['userId'],
-      meterValueHive: (json['meterValue'] as num).toDouble(),
-      consumptionHive: (json['consumption'] as num).toDouble(),
-      costHive: (json['cost'] as num).toDouble(),
+      userIdHive: json['userId'] ?? '',
+      meterValueHive: (json['meterValue'] as num? ?? 0.0 ).toDouble(),
+      consumptionHive: (json['consumption'] as num? ?? 0.0).toDouble(),
+      costHive: (json['cost'] as num? ?? 0.0 ).toDouble(),
 
       // 🔥 billing snapshot
-      pricePerKwhUsedHive: (json['pricePerKwhUsed'] as num).toDouble(),
-      minMonthlyFeeUsedHive: (json['minMonthlyFeeUsed'] as num).toDouble(),
-      calculationModeUsedHive: json['calculationModeUsed'],
-      settingsVersionUsedHive: json['settingsVersionUsed'] as int,
-
-      timestampHive: DateTime.parse(json['timestamp']),
+      pricePerKwhUsedHive: (json['pricePerKwhUsed'] as num? ?? 0.0).toDouble(),
+      minMonthlyFeeUsedHive: (json['minMonthlyFeeUsed'] as num? ?? 0.0).toDouble(),
+      calculationModeUsedHive: json['calculationModeUsed'] ?? 'cloud',
+      settingsVersionUsedHive: (json['settingsVersionUsed'] as int? ?? 0),
+      previousValueHive: (json['previousValue'] as num? ?? 0.0).toDouble(),
+      timestampHive: json['timestamp'] != null
+          ? DateTime.parse(json['timestamp'])
+          : DateTime.now(),
       imagePathHive: '',
       imageUrlHive: json['imageUrl'],
       syncedHive: json['synced'] ?? false,
@@ -113,7 +117,7 @@ class MeterReadingModel extends MeterReadingEntity {
       meterValueHive: meterValueHive,
       consumptionHive: consumptionHive,
       costHive: costHive,
-
+      previousValueHive: previousValueHive,
       pricePerKwhUsedHive: pricePerKwhUsedHive,
       minMonthlyFeeUsedHive: minMonthlyFeeUsedHive,
       calculationModeUsedHive: calculationModeUsedHive,

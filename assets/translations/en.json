@@ -171,8 +171,8 @@
   "id_number": "ID Number",
   "id_number_hint": "Enter National Id Number",
   "electrical_panel": "Electrical Panel ",
-  "calculation_pending": "Calculation pending"
-
-
-
+  "calculation_pending": "Calculation pending",
+  "user_deleted_success": "User deleted successfully",
+  "delete_user_title": "Delete User",
+  "delete_user_warning_message": "Are you sure you want to delete this user? This action will permanently delete all related data and cannot be undone."
 }

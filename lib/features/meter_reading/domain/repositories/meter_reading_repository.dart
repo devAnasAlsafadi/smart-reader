@@ -4,6 +4,7 @@ import '../entities/meter_reading_entity.dart';
 abstract class MeterReadingRepository {
   Future<ReadingSaveResult> addReading(MeterReadingEntity entity);
   Future<List<MeterReadingEntity>> getReadings(String userId);
+  Stream<MeterReadingEntity> watchReading(String readingId);
   Future<void> deleteReading(String id);
   Future<void> syncOffline(String userId);
 

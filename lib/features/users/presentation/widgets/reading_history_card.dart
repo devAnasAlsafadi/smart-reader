@@ -89,8 +89,6 @@ class ReadingHistoryCard extends StatelessWidget {
 
     if (confirmed == true) {
       context.read<MeterReadingBloc>().add(DeleteReadingEvent(reading.id));
-      context.read<BillingBloc>().add(LoadBillingEvent(userId));
-
     }
   }
 }

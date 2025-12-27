@@ -52,12 +52,15 @@ dependencies:
   cloud_firestore: ^6.1.0
   firebase_auth: ^6.1.2
   internet_connection_checker_plus: ^2.9.1
+#  connectivity_plus: ^7.0.0
   uuid: ^4.4.2
   geolocator: ^14.0.2
   flutter_staggered_animations: ^1.1.1
   cloudinary_public: ^0.23.1
   fluttertoast: ^9.0.0
   easy_localization: ^3.0.8
+  http: ^1.6.0
+  flutter_animate: ^4.5.2
 
 dev_dependencies:
   flutter_test:

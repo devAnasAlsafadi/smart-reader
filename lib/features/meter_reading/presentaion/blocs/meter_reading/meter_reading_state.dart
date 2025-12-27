@@ -49,4 +49,10 @@ class ReadingSavedFailureState extends MeterReadingState {
 }
 
 
-class ReadingDeletedState extends MeterReadingState {}
+
+class ReadingDeletedSuccessState extends MeterReadingState {}
+class ReadingLoadingDeleteState extends MeterReadingState {}
+class ListenToReadingState extends MeterReadingState {
+  final MeterReadingEntity? updatedReading;
+  ListenToReadingState(this.updatedReading);
+}

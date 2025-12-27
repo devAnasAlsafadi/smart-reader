@@ -64,6 +64,7 @@ class _ResultScreenState extends State<ResultScreen> {
     return BlocListener<MeterReadingBloc, MeterReadingState>(
       listener:  _controller.onBlocStateChanged,
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: AppColors.background,
         appBar: AppBar(),
         body: Padding(

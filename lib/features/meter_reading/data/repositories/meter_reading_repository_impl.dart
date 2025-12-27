@@ -1,6 +1,9 @@
 import 'dart:io';
-import '../../../../core/constants.dart';
+import 'package:smart_reader/core/developer.dart';
 
+import '../../../../core/constants.dart';
+import 'dart:convert'; 
+import 'package:http/http.dart' as http;
 import '../../../../core/services/connectivity_service.dart';
 import '../../../app_settings/domain/usecases/get_billing_settings_usecase.dart';
 import '../../../auth/presentation/screens/splash_screen/app_billings_setting.dart';
@@ -17,7 +20,7 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
   final UploadService uploader;
   final GetBillingSettingsUseCase getSettings;
 
-
+  final String _baseUrl = "http://192.168.1.150:3000/api";
   MeterReadingRepositoryImpl(
     this.local,
     this.remote,
@@ -33,10 +36,6 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
     final readings = await local.getUserReading(entity.userId);
     final isFirstReading = readings.isEmpty;
     final lastReading = isFirstReading ? null : readings.last;
-
-
-
-
 
     final settings = AppBillingSettings.current;
 
@@ -104,20 +103,43 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
         imagePathHive: null,
         syncedHive: true,
       );
+
       await remote.addReading(syncedModel);
       await local.updateReading(syncedModel);
+
+      if(!isFirstReading){
+        try{
+          await http.post(Uri.parse("$_baseUrl/calculate-reading"),
+          body: jsonEncode({"readingId": entity.id}),
+          headers: {"Content-Type": "application/json"},
+          );
+
+          AppLogger.info("Calculation request sent to server", tag: 'API_CALCULATION');
+        }catch(serverError,stack){
+          AppLogger.error("Server calculation trigger failed",error: serverError.toString(),
+              stack: stack,
+              tag: 'API_CALCULATION');
+        }
+      }
 
       if(isFirstReading){
         return ReadingSaveResult.initial(entity.meterValue);
       }
+
+
       return ReadingSaveResult.cloudPending(
         previousValue: lastReading!.meterValue,
         newValue: entity.meterValue,
+        readingId: entity.id
       );
 
-    } catch (e) {
-      print('cach');
-      throw Exception('Failed to sync reading: $e');
+    } catch (e,stackTrace) {
+      AppLogger.error(
+    'Failed to add reading process',
+    error: e,
+    stack: stackTrace,
+    tag: 'METER_REPOSITORY'
+    );      throw Exception('Failed to sync reading: $e');
     }
   }
 
@@ -128,11 +150,16 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
 
     final online = await ConnectivityService.isOnline();
     if (online) {
+      AppLogger.info('model is online');
       try {
         await remote.deleteReading(id);
         await local.deleteReading(id);
-      } catch (e) {}
+      } catch (e,stack) {
+        AppLogger.error("Exception is  : ${e.toString()}",stack:stack );
+      }
     } else {
+      AppLogger.info('model is offline');
+
       final updated = model.copyWith(isDeletedHive: true);
       await local.updateReading(updated);
     }
@@ -213,6 +240,22 @@ class MeterReadingRepositoryImpl implements MeterReadingRepository {
       }
     }
   }
+
+
+  @override
+  Stream<MeterReadingEntity> watchReading(String readingId) {
+    return remote.listenToReading(readingId).where((model) {
+      return model.costHive > 0 || model.calculationModeUsedHive == 'initial';
+    },).asyncMap((model)async {
+      await local.updateReading(model);
+      return model;
+    },);
+
+  }
+
+
+
+
 }
 
 enum ReadingResultType { initial, localCalculated, cloudPending }
@@ -220,6 +263,7 @@ enum ReadingResultType { initial, localCalculated, cloudPending }
 class ReadingSaveResult {
   final ReadingResultType type;
   final double? previousValue;
+  final String? readingId;
   final double newValue;
   final double? consumption;
   final double? cost;
@@ -228,16 +272,19 @@ class ReadingSaveResult {
       : type = ReadingResultType.initial,
         previousValue = null,
         consumption = null,
+        readingId = null,
         cost = null;
 
   const ReadingSaveResult.localCalculated({
     required this.previousValue,
     required this.newValue,
+    this.readingId,
     required this.consumption,
     required this.cost,
   }) : type = ReadingResultType.localCalculated;
 
   const ReadingSaveResult.cloudPending({
+    required this.readingId,
     required this.previousValue,
     required this.newValue,
   })  : type = ReadingResultType.cloudPending,

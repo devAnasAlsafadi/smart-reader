@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:smart_reader/core/extensions/localization_extension.dart';
 import 'package:smart_reader/features/meter_reading/presentaion/blocs/meter_reading/meter_reading_event.dart';
+import 'package:smart_reader/features/users/presentation/blocs/user_bloc/user_state.dart';
 import 'package:smart_reader/generated/locale_keys.g.dart';
 
 // Core
@@ -17,9 +18,9 @@ import 'package:smart_reader/core/utils/app_dimens.dart';
 import 'package:smart_reader/core/utils/app_snackbar.dart';
 
 // Features – Meter Reading
+import '../../../../../core/utils/app_dialog.dart';
 import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_bloc.dart';
 import '../../../../meter_reading/presentaion/blocs/meter_reading/meter_reading_state.dart';
-
 
 // Features – Payments
 import 'package:smart_reader/features/payments/presentaion/blocs/billing_bloc/billing_bloc.dart';
@@ -30,12 +31,11 @@ import 'package:smart_reader/features/payments/presentaion/blocs/payment_bloc/pa
 
 import '../../../../payments/presentaion/blocs/payment_bloc/payment_event.dart';
 import '../../../domain/entities/user_entity.dart';
+import '../../blocs/user_bloc/user_bloc.dart';
+import '../../blocs/user_bloc/user_event.dart';
 import '../../widgets/add_payment_bottomsheet.dart';
 import '../../widgets/billing_wallet_card.dart';
 import '../../widgets/monthly_card.dart';
-
-
-
 
 class UserDetailsScreen extends StatefulWidget {
   const UserDetailsScreen({super.key, required this.user});
@@ -51,10 +51,26 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   void initState() {
     super.initState();
     context.read<BillingBloc>().add(LoadBillingEvent(widget.user.id));
-    context.read<MeterReadingBloc>().add(SyncOfflineReadingsEvent(widget.user.id));
+    context.read<MeterReadingBloc>().add(
+      SyncOfflineReadingsEvent(widget.user.id),
+    );
     context.read<PaymentBloc>().add(SyncPaymentsEvent(widget.user.id));
   }
 
+  Future<void> _onDeleteUserPressed(BuildContext context) async {
+    final confirmed = await AppDialog.showDeleteConfirm(
+      context,
+      title: LocaleKeys.delete_user_title.t,
+      message: LocaleKeys.delete_user_warning_message.t,
+      confirmText: LocaleKeys.delete.t,
+      cancelText: LocaleKeys.cancel.t,
+    );
+
+    if (confirmed == true) {
+      AppDialog.showLoading(context);
+      context.read<UserBloc>().add(DeleteUserEvent(widget.user.id));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,122 +80,158 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person_remove_outlined, color: Colors.red),
+            onPressed: () => _onDeleteUserPressed(context),
+          ),
+        ],
       ),
       body: MultiBlocListener(
         listeners: [
           BlocListener<MeterReadingBloc, MeterReadingState>(
             listenWhen: (prev, curr) =>
-            curr is ReadingSavedSuccessState ||
-                curr is ReadingDeletedState,
+                curr is ReadingSavedSuccessState ||
+                curr is ReadingDeletedSuccessState ||
+                curr is ListenToReadingState,
             listener: (context, state) {
-              context.read<BillingBloc>().add(
-                LoadBillingEvent(widget.user.id),
-              );
-              if(state is ReadingDeletedState){
-               AppSnackBar.success(context, LocaleKeys.reading_deleted_success.tr());
+
+              if (state is ListenToReadingState) {
+                if (state.updatedReading != null &&
+                    state.updatedReading!.cost > 0) {
+                  context.read<BillingBloc>().add(
+                    LoadBillingEvent(widget.user.id),
+                  );
+                }
+              }
+              context.read<BillingBloc>().add(LoadBillingEvent(widget.user.id));
+              if (state is ReadingDeletedSuccessState) {
+                context.read<BillingBloc>().add(LoadBillingEvent(widget.user.id));
+                AppSnackBar.success(
+                  context,
+                  LocaleKeys.reading_deleted_success.tr(),
+                );
               }
             },
-
           ),
           BlocListener<PaymentBloc, PaymentState>(
             listenWhen: (previous, current) =>
-            previous.deleteSuccess != current.deleteSuccess,
+                previous.deleteSuccess != current.deleteSuccess,
             listener: (context, state) {
               if (state.deleteSuccess) {
                 context.read<BillingBloc>().add(
                   LoadBillingEvent(widget.user.id),
                 );
-                AppSnackBar.success(context, LocaleKeys.payment_deleted_success.tr());
+                AppSnackBar.success(
+                  context,
+                  LocaleKeys.payment_deleted_success.tr(),
+                );
               }
             },
-
           ),
-
-        ], child: BlocBuilder<BillingBloc, BillingState>(builder:
-          (context, state) {
-        if (state.isLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (state.error != null) {
-          return Center(child: Text( "${LocaleKeys.generic_error.tr()} ${state.error}",));
-        }
-        if (state.summary == null) {
-          return  Center(child: Text(LocaleKeys.no_billing_data.tr()));
-        }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppDimens.paddingLarge),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                widget.user.name,
-                style: AppTextStyles.heading2,
-              ),
-              const SizedBox(height: 4),
-              Row(
+          BlocListener<UserBloc,UserState>(
+            listenWhen: (p, c) => p.isLoadingDelete != c.isLoadingDelete || c.deleteSuccess,
+            listener: (context, state) {
+              if (state.deleteSuccess) {
+                Navigator.pop(context);
+                Navigator.pop(context);
+                AppSnackBar.success(context, LocaleKeys.user_deleted_success.t);
+              }
+          },)
+        ],
+        child: BlocBuilder<BillingBloc, BillingState>(
+          builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (state.error != null) {
+              return Center(
+                child: Text("${LocaleKeys.generic_error.tr()} ${state.error}"),
+              );
+            }
+            if (state.summary == null) {
+              return Center(child: Text(LocaleKeys.no_billing_data.tr()));
+            }
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(AppDimens.paddingLarge),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.location_on, size: 16,
-                      color: AppColors.textSecondary),
-                  const SizedBox(width: 4),
-                  Text(
-                    widget.user.street,
-                    style: AppTextStyles.bodySecondary,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              BillingWalletCard(summary: state.summary!),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.bolt),
-                      label:  Text(LocaleKeys.add_reading.tr()),
-                      onPressed: () async {
-                        await NavigationManger.navigateTo(
-                          context,
-                          RouteNames.camera,
-                          arguments: widget.user.id,
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.attach_money),
-                      label:  Text(LocaleKeys.add_payment.tr()),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.accentGreen,
+                  Text(widget.user.name, style: AppTextStyles.heading2),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+                        size: 16,
+                        color: AppColors.textSecondary,
                       ),
-                      onPressed: () {
-                        showAddPaymentSheet(
-                          context,
-                          userId: widget.user.id,
-                        );
-                      },
-                    ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.user.street,
+                        style: AppTextStyles.bodySecondary,
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 24),
+                  BillingWalletCard(summary: state.summary!),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.bolt),
+                          label: Text(LocaleKeys.add_reading.tr()),
+                          onPressed: () async {
+                            await NavigationManger.navigateTo(
+                              context,
+                              RouteNames.camera,
+                              arguments: widget.user.id,
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: const Icon(Icons.attach_money),
+                          label: Text(LocaleKeys.add_payment.tr()),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.accentGreen,
+                          ),
+                          onPressed: () {
+                            showAddPaymentSheet(
+                              context,
+                              userId: widget.user.id,
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  Text(
+                    LocaleKeys.monthly_breakdown.t,
+                    style: AppTextStyles.heading3,
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: state.monthly.length,
+                    itemBuilder: (context, index) {
+                      return MonthlyCard(
+                        month: state.monthly[index],
+                        userId: widget.user.id,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
                 ],
               ),
-              const SizedBox(height: 30),
-              Text(LocaleKeys.monthly_breakdown.t, style: AppTextStyles.heading3),
-              const SizedBox(height: 16),
-              ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: state.monthly.length,
-                itemBuilder: (context, index) {
-                  return MonthlyCard(month: state.monthly[index],
-                    userId: widget.user.id,);
-                },
-              ),
-            ],
-          ),
-        );
-      },),
-
+            );
+          },
+        ),
       ),
     );
   }

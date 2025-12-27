@@ -58,8 +58,10 @@ class _EditReadingScreenState extends State<EditReadingScreen> {
     }
 
     FocusScope.of(context).unfocus();
-    await Future.delayed(const Duration(milliseconds: 200));
-    Navigator.pop(context, value);
+    await Future.delayed(const Duration(milliseconds: 300));
+    if (mounted) {
+      Navigator.pop(context, value);
+    }
   }
 
   @override

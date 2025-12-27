@@ -21,6 +21,7 @@ class MeterReadingEntity {
   final String? imageUrl;
   final bool synced;
   final bool isDeleted;
+  final double? previousValue;
 
 
 
@@ -40,6 +41,7 @@ class MeterReadingEntity {
     required this.imagePath,
     required this.synced,
     this.imageUrl,
+    this.previousValue,
     this.isDeleted = false,
   });
 
@@ -54,6 +56,7 @@ class MeterReadingEntity {
     consumption: 0.0,
     cost: 0.0,
     meterValue: 0.0,
+    previousValue: 0.0,
     calculationModeUsed:"",
     minMonthlyFeeUsed: 0.0,
     pricePerKwhUsed: 0.0,
@@ -67,6 +70,7 @@ class MeterReadingEntity {
     String? userId,
     double? meterValue,
     double? cost,
+    double? previousValue,
     double? consumption,
     DateTime? timestamp,
     String? imagePath,
@@ -88,6 +92,7 @@ class MeterReadingEntity {
       imagePath: imagePath ?? this.imagePath,
       imageUrl: imageUrl ?? this.imageUrl,
       synced: synced ?? this.synced,
+      previousValue: previousValue ?? this.previousValue,
       isDeleted: isDeleted ?? this.isDeleted,
       pricePerKwhUsed: pricePerKwhUsed ?? this.pricePerKwhUsed,
       minMonthlyFeeUsed: minMonthlyFeeUsed ?? this.minMonthlyFeeUsed,

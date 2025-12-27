@@ -171,7 +171,8 @@
   "id_number": "رقم الهوية",
   "id_number_hint": "أدخل رقم هويتك",
   "electrical_panel": "طابلون الكهرباء",
-  "calculation_pending": "قيد المعالجة في النظام"
-
-
+  "calculation_pending": "قيد المعالجة في النظام",
+  "user_deleted_success": "تم حذف المستخدم بنجاح",
+  "delete_user_title": "حذف المستخدم",
+  "delete_user_warning_message": "هل أنت متأكد من حذف هذا المستخدم؟ سيؤدي هذا الإجراء إلى حذف كافة البيانات المتعلقة به نهائياً ولا يمكن التراجع عنه."
 }

@@ -51,38 +51,46 @@ class ResultScreenController {
     BuildContext context,
     MeterReadingState state,
   ) async {
+
+
     if (state is ReadingSavedLoadingState) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => const Center(child: CircularProgressIndicator()),
-      );
+      AppDialog.showLoading(context);
     }
 
-    if (state is ReadingSavedSuccessState) {
-      Navigator.pop(context);
-      final r = state.result;
+    if(state is ReadingSavedSuccessState){
+      final r  = state.result;
 
-      if (r.type == ReadingResultType.localCalculated) {
-        await AppDialog.showReadingResult(
-          context,
-          result: r
-        );
+      if(r.type == ReadingResultType.localCalculated  || r.type == ReadingResultType.initial){
+        Navigator.pop(context);
+        await AppDialog.showReadingResult(context, result: r);
+        NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.home);
+      }else if(r.type == ReadingResultType.cloudPending){
+        context.read<MeterReadingBloc>().add(ListenToReadingEvent(r.readingId!));
       }
-
-      if (r.type == ReadingResultType.cloudPending) {
-        await AppDialog.showReadingResult(
-          context,
-         result: r
-        );
-      }
-
-      NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.home);
     }
+
+    if(state is ListenToReadingState){
+      print("Current Cost from Cloud: ${state.updatedReading?.cost}");
+      final reading = state.updatedReading;
+      if (reading != null){
+        print("✅ Calculation updated successfully!");
+          await AppDialog.showReadingResult(
+            context,
+            result: ReadingSaveResult.localCalculated(
+              previousValue: reading.previousValue,
+              newValue: reading.meterValue,
+              consumption: reading.consumption,
+              cost: reading.cost,
+              readingId: reading.id,
+            ),
+          );
+        NavigationManger.pushNamedAndRemoveUntil(context, RouteNames.home);
+      }
+    }
+
 
     if (state is ReadingSavedFailureState) {
-      print('failure');
-      Navigator.pop(context);
+      if (Navigator.canPop(context)) Navigator.pop(context);
       AppSnackBar.error(context, state.message);
     }
   }
