@@ -66,10 +66,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) =>  EditReadingScreen(initialReading: meterValue,));
       case RouteNames.extractReadingScreen:
         final args = settings.arguments as Map<String, dynamic>;
-        final readings = args['readings'] as List<String>;
         final entity = args['entity'] as MeterReadingEntity;
         final rawText = args['rawText'] as String;
-        return MaterialPageRoute(builder: (_) =>  ExtractReadingScreen(readings: readings, rawText: rawText, entity: entity,));
+        return MaterialPageRoute(builder: (_) =>  ExtractReadingScreen(rawText: rawText, entity: entity,));
 
       default:
         return MaterialPageRoute(

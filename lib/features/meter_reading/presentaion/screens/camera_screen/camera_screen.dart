@@ -1,5 +1,6 @@
 // Dart
 import 'dart:io';
+import 'dart:typed_data';
 
 // Flutter
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/material.dart';
 // Third-party
 import 'package:camera/camera.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smart_reader/core/developer.dart';
 
 // Core
 import 'package:smart_reader/core/native/native_image_processor.dart';
@@ -31,8 +33,6 @@ class _CameraScreenState extends State<CameraScreen> {
   CameraController? _controller;
   Future<void>? _initializeFuture;
 
-  final double overlayWidthFactor = 0.9;
-  final double overlayHeightFactor = 0.2;
   final double overlayVerticalPosFactor = 0.35;
 
   @override
@@ -40,7 +40,13 @@ class _CameraScreenState extends State<CameraScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initCamera();
+      _controller!.initialize();
+      if (_controller!.value.isInitialized) {
+         _controller!.setFocusMode(FocusMode.auto);
+         _controller!.setExposureMode(ExposureMode.auto);
+      }
     });
+
   }
 
 
@@ -57,6 +63,8 @@ class _CameraScreenState extends State<CameraScreen> {
     _initializeFuture = _controller!.initialize();
     if (mounted) setState(() {});
   }
+
+
   CameraDescription _getBackCamera(List<CameraDescription> cameras) {
     return cameras.firstWhere(
           (c) => c.lensDirection == CameraLensDirection.back,
@@ -78,26 +86,21 @@ class _CameraScreenState extends State<CameraScreen> {
         screenSize: screenSize,
       );
 
-      final enhancedBytes = await NativeImageProcessor.enhance(croppedBytes);
+      final List<Uint8List> digitImages = [croppedBytes];
+
 
       final dir = await getApplicationDocumentsDirectory();
-
-      final croppedFile = File("${dir.path}/meter_raw_${DateTime
-          .now()}.png");
-      await croppedFile.writeAsBytes(croppedBytes);
-
-      final enhancedFile = File("${dir.path}/meter_enhanced_${DateTime
-          .now()}.png");
-      await enhancedFile.writeAsBytes(enhancedBytes);
-      print('enhancedFile : $enhancedFile');
+      final enhancedFile = File("${dir.path}/meter_full_${DateTime.now().millisecondsSinceEpoch}.png");
+      await enhancedFile.writeAsBytes(croppedBytes);
 
 
       NavigationManger.navigateTo(
         context,
         RouteNames.preview,
         arguments: {
-          'imageFile' : enhancedFile,
-          'userId' : widget.userId
+          'imageFile': enhancedFile,
+          // 'digitImages': digitImages,
+          'userId': widget.userId
         },
       );
     } catch (e) {
@@ -132,8 +135,11 @@ class _CameraScreenState extends State<CameraScreen> {
               final screenW = constraints.maxWidth;
               final screenH = constraints.maxHeight;
 
-              final overlayW = screenW * overlayWidthFactor;
-              final overlayH = screenH * overlayHeightFactor;
+              // final overlayW = screenW * 0.35;
+              // final overlayH =overlayW / 6.45;
+              final overlayW = screenW * 0.50;
+              final overlayH = 60.0;
+
               final overlayRect = Rect.fromLTWH(
                 (screenW - overlayW) / 2,
                 screenH * overlayVerticalPosFactor,
@@ -153,7 +159,6 @@ class _CameraScreenState extends State<CameraScreen> {
                       ),
                     ),
                   ),
-
                   Positioned.fill(
                     child: IgnorePointer(
                       ignoring: true,
@@ -162,7 +167,37 @@ class _CameraScreenState extends State<CameraScreen> {
                       ),
                     ),
                   ),
-
+                  Positioned(
+                    top: overlayRect.top - 40,
+                    left: 0,
+                    right: 0,
+                    child: const Center(
+                      child: Text(
+                        "ضع الأرقام على الخط الأحمر",
+                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: AppDimens.paddingLarge,
+                    right: AppDimens.paddingLarge,
+                    child: IconButton(
+                      icon: Icon(
+                        _controller?.value.flashMode == FlashMode.torch
+                            ? Icons.flash_on
+                            : Icons.flash_off,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        _controller?.setFlashMode(
+                            _controller?.value.flashMode == FlashMode.torch
+                                ? FlashMode.off
+                                : FlashMode.torch
+                        );
+                        setState(() {});
+                      },
+                    ),
+                  ),
                   Positioned(
                     top: AppDimens.paddingLarge,
                     left: AppDimens.paddingLarge,

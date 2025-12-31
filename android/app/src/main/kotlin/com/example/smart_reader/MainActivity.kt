@@ -64,40 +64,110 @@ class MainActivity : FlutterActivity() {
 
 
 
-    private fun processImage(bytes: ByteArray): ByteArray {
+//    private fun processImage(bytes: ByteArray): ByteArray {
+//
+//        val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+//        val mat = Mat()
+//        Utils.bitmapToMat(bmp, mat)
+//
+//        // 1) Convert to Black & White (Grayscale)
+//        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY)
+//
+//        // 2) Gaussian Blur
+//        Imgproc.GaussianBlur(mat, mat, Size(5.0, 5.0), 0.0)
+//
+//        Imgproc.adaptiveThreshold(
+//            mat,
+//            mat,
+//            255.0,
+//            Imgproc.ADAPTIVE_THRESH_MEAN_C,
+//            Imgproc.THRESH_BINARY,
+//            15,
+//            7.0
+//        )
+//
+//        Imgproc.dilate(mat, mat, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0, 2.0)))
+//
+//        // Convert back to bitmap
+//        val resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
+//        Utils.matToBitmap(mat, resultBitmap)
+//
+//        val out = ByteArrayOutputStream()
+//        resultBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+//        return out.toByteArray()
+//    }
+//    private fun processImage(bytes: ByteArray): ByteArray {
+//        val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+//        val mat = Mat()
+//        Utils.bitmapToMat(bmp, mat)
+//
+//        // 1) تحويل للرمادي
+//        Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY)
+//
+//        // 2) تحسين التباين (CLAHE) بدلاً من الـ Threshold القاسي
+//        val clahe = Imgproc.createCLAHE(2.0, Size(8.0, 8.0))
+//        clahe.apply(mat, mat)
+//
+//        // 3) Inverse Binary Threshold (هام جداً: لجعل الأرقام بيضاء والخلفية سوداء)
+//        // استخدم THRESH_BINARY_INV بدلاً من THRESH_BINARY
+//        Imgproc.adaptiveThreshold(
+//            mat,
+//            mat,
+//            255.0,
+//            Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C,
+//            Imgproc.THRESH_BINARY_INV, // عكس الألوان هنا
+//            11,
+//            2.0
+//        )
+//
+//        // 4) تنظيف الضجيج البسيط (اختياري)
+//        val kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0, 2.0))
+//        Imgproc.morphologyEx(mat, mat, Imgproc.MORPH_OPEN, kernel)
+//
+//        // تحويل النتائج
+//        val resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
+//        Utils.matToBitmap(mat, resultBitmap)
+//
+//        val out = ByteArrayOutputStream()
+//        resultBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+//        return out.toByteArray()
+//    }
 
+// MainActivity.kt
+
+    private fun processImage(bytes: ByteArray): List<ByteArray> {
         val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
         val mat = Mat()
         Utils.bitmapToMat(bmp, mat)
 
-        // 1) Convert to Black & White (Grayscale)
+        // 1. تحويل للرمادي وعكس الألوان لجعل الأرقام بيضاء
         Imgproc.cvtColor(mat, mat, Imgproc.COLOR_BGR2GRAY)
+        Imgproc.adaptiveThreshold(mat, mat, 255.0, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY_INV, 11, 2.0)
 
-        // 2) Gaussian Blur
-        Imgproc.GaussianBlur(mat, mat, Size(5.0, 5.0), 0.0)
+        // 2. البحث عن الأرقام (Contours)
+        val contours = mutableListOf<org.opencv.core.MatOfPoint>()
+        val hierarchy = Mat()
+        Imgproc.findContours(mat, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE)
 
-        Imgproc.adaptiveThreshold(
-            mat,
-            mat,
-            255.0,
-            Imgproc.ADAPTIVE_THRESH_MEAN_C,
-            Imgproc.THRESH_BINARY,
-            15,
-            7.0
-        )
+        // 3. ترتيب الصناديق من اليسار إلى اليمين
+        val digitRects = contours.map { Imgproc.boundingRect(it) }
+            .filter { rect -> rect.height > mat.rows() * 0.5 && rect.width < rect.height } // تصفية الضجيج
+            .sortedBy { it.x }
 
-        Imgproc.dilate(mat, mat, Imgproc.getStructuringElement(Imgproc.MORPH_RECT, Size(2.0, 2.0)))
+        val outputList = mutableListOf<ByteArray>()
 
-        // Convert back to bitmap
-        val resultBitmap = Bitmap.createBitmap(mat.cols(), mat.rows(), Bitmap.Config.ARGB_8888)
-        Utils.matToBitmap(mat, resultBitmap)
+        for (rect in digitRects) {
+            val digitMat = Mat(mat, rect) // قص الرقم بدقة
 
-        val out = ByteArrayOutputStream()
-        resultBitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
-        return out.toByteArray()
+            val digitBmp = Bitmap.createBitmap(digitMat.cols(), digitMat.rows(), Bitmap.Config.ARGB_8888)
+            Utils.matToBitmap(digitMat, digitBmp)
+
+            val out = ByteArrayOutputStream()
+            digitBmp.compress(Bitmap.CompressFormat.PNG, 100, out)
+            outputList.add(out.toByteArray())
+        }
+
+        return outputList // نرسل قائمة بكل رقم لوحده
     }
-
-
-
 
 }

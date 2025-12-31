@@ -1,9 +1,14 @@
 // Dart
 import 'dart:io';
+import 'dart:typed_data';
 
 // Flutter
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_reader/core/developer.dart';
+import 'package:smart_reader/core/utils/app_assets.dart';
+import 'package:smart_reader/core/utils/app_dialog.dart';
+import 'package:smart_reader/core/utils/app_snackbar.dart';
 
 // Third-party
 import 'package:uuid/uuid.dart';
@@ -21,6 +26,7 @@ import 'package:smart_reader/core/utils/app_dimens.dart';
 
 // Features – Meter Reading
 import 'package:smart_reader/features/meter_reading/domain/entities/meter_reading_entity.dart';
+import '../../../data/services/meter_ocr_service.dart';
 import '../../blocs/meter_reading/meter_reading_bloc.dart';
 import '../../blocs/meter_reading/meter_reading_event.dart';
 import '../../blocs/meter_reading/meter_reading_state.dart';
@@ -42,8 +48,6 @@ class PreviewScreen extends StatefulWidget {
 class _PreviewScreenState extends State<PreviewScreen> {
   bool _isProcessing = false;
   String _rawText = '';
-  List<String> _digits = [];
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<MeterReadingBloc, MeterReadingState>(
@@ -59,24 +63,24 @@ class _PreviewScreenState extends State<PreviewScreen> {
             _isProcessing = false;
           });
           _rawText = state.rawText;
-          context.read<MeterReadingBloc>().add(ExtractDigitsEvent(_rawText));
-        }
-        if (state is DigitsExtractedState) {
-          if (!mounted) return;
-          setState(() {
-            _isProcessing = false;
-          });
-          _digits = state.digits;
+          AppLogger.info('raw text is  : ${state.rawText}',tag: 'IMAGE PROCESSING');
           NavigationManger.navigateTo(
             context,
             RouteNames.extractReadingScreen,
             arguments: {
-              'readings': _digits,
+              // 'readings': _digits,
               'rawText': _rawText,
               'entity': entity,
             },
           );
+          // context.read<MeterReadingBloc>().add(ExtractDigitsEvent(_rawText));
         }
+
+        if(state is OcrFailureState){
+          AppLogger.error(state.error);
+          AppSnackBar.error(context, state.error);
+        }
+
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
@@ -112,7 +116,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       borderRadius: BorderRadius.circular(AppDimens.radius),
                       child: Image.file(
                         widget.imageFile,
-                        width: 260,
+                         height: 120,
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -132,9 +136,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
                         icon: const Icon(Icons.auto_awesome),
                         label: Text(LocaleKeys.extract_reading.t),
                         onPressed: () async {
+
                           context.read<MeterReadingBloc>().add(
                             ProcessImageEvent(widget.imageFile),
                           );
+
+                          // print("click");
+                          // final ocrService = MeterOcrService();
+                          // File testFile = await ocrService.getImageFileFromAssets(AppAssets.testImage);
+                          // String result = await ocrService.runInference(testFile);
+                          // AppLogger.info("The Result is: $result", tag: "DIRECT_TEST");
                         },
                       ),
                     ),
@@ -164,6 +175,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       ),
     );
   }
+
+
 
   MeterReadingEntity get entity {
     return MeterReadingEntity(

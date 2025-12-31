@@ -16,6 +16,7 @@ import 'package:smart_reader/features/electrical_panels/domain/usecases/get_elec
 import 'package:smart_reader/features/electrical_panels/presentation/blocs/panel_bloc/panel_bloc.dart';
 import 'package:smart_reader/features/meter_reading/data/data_source/meter_reading_local_data_source.dart';
 import 'package:smart_reader/features/meter_reading/data/data_source/meter_reading_remote_data_source.dart';
+import 'package:smart_reader/features/meter_reading/data/services/meter_ocr_service.dart';
 import 'package:smart_reader/features/meter_reading/data/services/ocr_service.dart';
 import 'package:smart_reader/features/meter_reading/data/services/upload_service.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/add_reading_usecase.dart';
@@ -66,7 +67,8 @@ import 'features/users/domain/usecases/sync_offline_user_usecase.dart';
 import 'features/users/presentation/blocs/user_bloc/user_bloc.dart';
 
 class SmartReaderApp extends StatefulWidget {
-  const SmartReaderApp({super.key});
+  const SmartReaderApp(this.ocrService,{super.key,});
+  final MeterOcrService ocrService;
 
   @override
   State<SmartReaderApp> createState() => _SmartReaderAppState();
@@ -140,7 +142,7 @@ class _SmartReaderAppState extends State<SmartReaderApp> {
             getReadings: GetReadingsUseCase(meterReadingRepo),
             syncOffline: SyncOfflineReadingsUseCase(meterReadingRepo),
             extractDigits: ExtractDigitsUseCase(),
-            processImage: ProcessImageUseCase(OcrService()),
+            processImage: ProcessImageUseCase(widget.ocrService),
           ),
         ),
         BlocProvider(

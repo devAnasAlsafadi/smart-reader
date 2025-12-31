@@ -13,6 +13,7 @@ import 'package:smart_reader/features/users/data/models/user_model.dart';
 
 import 'SimpleBlocObserver.dart';
 import 'features/auth/data/models/employee_model.dart';
+import 'features/meter_reading/data/services/meter_ocr_service.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,6 +21,8 @@ void main() async {
   await EasyLocalization.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Bloc.observer = SimpleBlocObserver();
+  final ocrService = MeterOcrService();
+  await ocrService.initModel();
   await Hive.initFlutter();
   Hive.registerAdapter(EmployeeModelAdapter());
   Hive.registerAdapter(UserModelAdapter());
@@ -40,7 +43,7 @@ void main() async {
       fallbackLocale: Locale('en'),
       // startLocale: const Locale('ar'),
       path: AppAssets.translations,
-      child: const SmartReaderApp(),
+      child:  SmartReaderApp(ocrService),
     ),
   );
 }

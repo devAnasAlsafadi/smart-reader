@@ -3,6 +3,7 @@
 import 'dart:math';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:smart_reader/core/developer.dart';
 import 'package:smart_reader/features/meter_reading/data/models/meter_reading_model.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/listen_to_reading_usecase.dart';
 import 'package:smart_reader/features/meter_reading/domain/usecases/sync_offline_readings_usecase.dart';
@@ -37,14 +38,22 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
 
     on<ProcessImageEvent>((event, emit) async {
       emit(OcrProcessingState());
-      final text = await processImage(event.imageFile);
-      emit(OcrTextReadyState(text));
+      try{
+        AppLogger.info('text before is ${event.imageFile}');
+        final text = await processImage(event.imageFile);
+        AppLogger.info('text extracted is : ${text}');
+        emit(OcrTextReadyState(text));
+      }
+      catch(e)
+      {
+        emit(OcrFailureState(e.toString()));
+      }
     });
 
-    on<ExtractDigitsEvent>((event, emit) {
-      final digits = extractDigits(event.rawText);
-      emit(DigitsExtractedState(digits));
-    });
+    // on<ExtractDigitsEvent>((event, emit) {
+    //   final digits = extractDigits(event.rawText);
+    //   emit(DigitsExtractedState(digits));
+    // });
 
     on<SaveReadingEvent>((event, emit) async {
       emit(ReadingSavedLoadingState());
@@ -64,14 +73,11 @@ class MeterReadingBloc extends Bloc<MeterReadingEvent, MeterReadingState> {
           imageUrl: '',
           synced: false,
         );
-        print('enter try');
         final result = await addReading(entity);
-        print('enter sucess');
 
         emit(ReadingSavedSuccessState(result));
 
       } catch (e) {
-        print('enter failure');
         emit(ReadingSavedFailureState(e.toString()));
       }
     });

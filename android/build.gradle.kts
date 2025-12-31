@@ -3,6 +3,10 @@ allprojects {
         google()
         mavenCentral()
     }
+    configurations.all {
+        exclude(group = "com.google.ai.edge.litert")
+        exclude(group = "com.google.ai.edge")
+    }
 }
 
 val newBuildDir: Directory =

@@ -9,6 +9,13 @@ abstract class MeterReadingState extends Equatable {
 
 class OcrInitialState extends MeterReadingState {}
 class OcrProcessingState extends MeterReadingState {}
+class OcrFailureState extends MeterReadingState {
+  final String error;
+  OcrFailureState(this.error);
+  @override
+  List<Object?> get props => [error];
+}
+
 class OcrTextReadyState extends MeterReadingState {
   final String rawText;
   OcrTextReadyState(this.rawText);

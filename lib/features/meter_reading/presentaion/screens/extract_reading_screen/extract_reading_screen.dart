@@ -20,11 +20,11 @@ import 'package:smart_reader/features/meter_reading/presentaion/widgets/reading_
 class ExtractReadingScreen extends StatefulWidget {
   const ExtractReadingScreen({
     super.key,
-    required this.readings,
+    // required this.readings,
     required this.rawText,
     required this.entity,
   });
-  final List<String> readings;
+  // final List<String> readings;
   final MeterReadingEntity entity;
   final String rawText;
 
@@ -56,7 +56,72 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-           Center(
+          const SizedBox(height: 40),
+          const Icon(Icons.auto_awesome, size: 64, color: AppColors.primary),
+          const SizedBox(height: 16),
+          Text(
+            LocaleKeys.reading_extracted.t,
+            style: AppTextStyles.subtitle,
+          ),
+          const SizedBox(height: 32),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            decoration: BoxDecoration(
+              color: AppColors.black,
+              borderRadius: BorderRadius.circular(AppDimens.radiusLarge),
+              border: Border.all(color: AppColors.primaryLight, width: 2),
+            ),
+            child: Text(
+              widget.rawText,
+              textAlign: TextAlign.center,
+              style: AppTextStyles.heading1.copyWith(
+                color: AppColors.white,
+                fontSize: 42,
+                letterSpacing: 4,
+              ),
+            ),
+          ),
+          const Spacer(),
+
+           SizedBox(
+             width: double.infinity,
+             height: 55,
+             child: ElevatedButton(onPressed: () {
+               final meterValue = double.tryParse(widget.rawText) ?? 0.0;
+               final updated = widget.entity.copyWithNewData(
+                 meterValue: meterValue,
+               );
+               NavigationManger.navigateTo(
+                   context,
+                   RouteNames.result,
+                   arguments: updated
+               );
+             },
+               style: ElevatedButton.styleFrom(
+                 backgroundColor: AppColors.accentGreen,
+               ),
+               child: Text(LocaleKeys.confirm_reading.t),
+             ),
+           ),
+          TextButton(
+            onPressed: () => NavigationManger.pop(context),
+            child:  Text(
+              LocaleKeys.try_again.t,
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+
+
+        ],
+      ),
+    );
+  }
+}
+
+
+/*
+      Center(
             child: Column(
               children: [
                 const SizedBox(height: 12),
@@ -104,20 +169,20 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
           const SizedBox(height: 16),
            Text(  LocaleKeys.detected_readings.t, style: AppTextStyles.heading2),
           const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.readings.length,
-              itemBuilder: (context, index) {
-                final reading = widget.readings[index];
-                final isSelected = reading == selectedReading;
-                return ReadingOptionTile(reading: reading, isSelected: isSelected, onTap: () {
-                  setState(() {
-                    selectedReading = reading;
-                  });
-                },);
-              },
-            ),
-          ),
+          // Expanded(
+          //   child: ListView.builder(
+          //     itemCount: widget.readings.length,
+          //     itemBuilder: (context, index) {
+          //       final reading = widget.readings[index];
+          //       final isSelected = reading == selectedReading;
+          //       return ReadingOptionTile(reading: reading, isSelected: isSelected, onTap: () {
+          //         setState(() {
+          //           selectedReading = reading;
+          //         });
+          //       },);
+          //     },
+          //   ),
+          // ),
           const SizedBox(height: 12),
           SizedBox(
             width: double.infinity,
@@ -148,8 +213,4 @@ class _ExtractReadingScreenState extends State<ExtractReadingScreen> {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
+ */
